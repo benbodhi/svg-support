@@ -133,7 +133,7 @@ function bodhi_svgs_update_featured_image_meta($post_id, $value) {
  */
 function bodhi_svgs_featured_image_inline_toggle() {
     // Verify nonce and permissions
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'svg-support-featured')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'svg-support-featured')) {
         wp_send_json_error('Invalid nonce');
     }
 
@@ -141,7 +141,11 @@ function bodhi_svgs_featured_image_inline_toggle() {
         wp_send_json_error('Insufficient permissions');
     }
 
-    // Get and sanitize values
+    // Validate and sanitize input
+    if (!isset($_POST['post_id']) || !isset($_POST['checked'])) {
+        wp_send_json_error('Missing parameters');
+    }
+
     $post_id = intval($_POST['post_id']);
     $checked = ($_POST['checked'] === 'true');
 

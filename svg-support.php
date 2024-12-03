@@ -19,16 +19,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Global variables
+ * Global variables and constants
  */
 global $bodhi_svgs_options;
-$bodhi_svgs_options = array();										// Defining global array
-// $svgs_plugin_version = '2.5.9';										// for use on admin pages
+$bodhi_svgs_options = array();                                     // Defining global array
 define('BODHI_SVGS_VERSION', get_file_data(__FILE__, array('Version' => 'Version'))['Version']);
-$plugin_file = plugin_basename(__FILE__);							// plugin file for reference
-define( 'BODHI_SVGS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );	// define the absolute plugin path for includes
-define( 'BODHI_SVGS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );		// define the plugin url for use in enqueue
-$bodhi_svgs_options = get_option('bodhi_svgs_settings', array());	// Retrieve our plugin settings from the options table, ensure it's an array
+define('BODHI_SVGS_PLUGIN_FILE', __FILE__);                        // define the absolute plugin file path
+define('BODHI_SVGS_PLUGIN_PATH', plugin_dir_path(__FILE__));       // define the absolute plugin path for includes
+define('BODHI_SVGS_PLUGIN_URL', plugin_dir_url(__FILE__));         // define the plugin url for use in enqueue
+$bodhi_svgs_options = get_option('bodhi_svgs_settings', array());  // Retrieve our plugin settings
 
 // ensure $bodhi_svgs_options is always an array
 if (!is_array($bodhi_svgs_options)) {

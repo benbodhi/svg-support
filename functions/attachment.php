@@ -513,14 +513,23 @@ add_filter('rest_pre_upload_file', 'bodhi_svgs_rest_pre_upload', 10, 2);
 function bodhi_svgs_cleanup_duplicate_meta() {
     global $wpdb;
     
-    // Find all posts with duplicate inline_featured_image meta
-    $duplicates = $wpdb->get_results("
-        SELECT post_id, COUNT(*) as count 
-        FROM {$wpdb->postmeta} 
-        WHERE meta_key = 'inline_featured_image' 
-        GROUP BY post_id 
-        HAVING count > 1
-    ");
+    // Attempt to get cached results first
+    $cache_key = 'bodhi_svgs_duplicate_meta';
+    $duplicates = wp_cache_get($cache_key);
+
+    if ($duplicates === false) {
+        // Find all posts with duplicate inline_featured_image meta
+        $duplicates = $wpdb->get_results("
+            SELECT post_id, COUNT(*) as count 
+            FROM {$wpdb->postmeta} 
+            WHERE meta_key = 'inline_featured_image' 
+            GROUP BY post_id 
+            HAVING count > 1
+        ");
+
+        // Cache the results for future use
+        wp_cache_set($cache_key, $duplicates, '', 3600); // Cache for 1 hour
+    }
 
     // For each post with duplicates
     foreach ($duplicates as $duplicate) {
