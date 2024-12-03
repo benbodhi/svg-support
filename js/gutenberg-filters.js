@@ -1,8 +1,8 @@
 "use strict"
 
 const { createElement, Fragment, useState } = wp.element;
-const withSelect = wp.data.withSelect;
-const withDispatch = wp.data.withDispatch;
+const { withSelect, withDispatch } = wp.data;
+const { compose } = wp.compose;
 
 function CheckBoxCustom(props) {
     const [isChecked, setIsChecked] = useState(props.meta.inline_featured_image);
@@ -19,13 +19,13 @@ function CheckBoxCustom(props) {
             onChange: (value) => {
                 setIsChecked(value);
                 updateInlineFeaturedSvg(value, meta);
-            }
+            },
+            __nextHasNoMarginBottom: true
         }
     );
 }
 
-const composedCheckBox = wp.compose.compose([
-    withState((value) => ({ isChecked: value })),
+const composedCheckBox = compose([
     withSelect((select) => {
         const currentMeta = select('core/editor').getCurrentPostAttribute('meta');
         const editedMeta = select('core/editor').getEditedPostAttribute('meta');
