@@ -51,7 +51,9 @@ function bodhi_svg_support_settings_page() {
  */
 function bodhi_sanitize_fields( $value ) {
 
-	$value['css_target'] = esc_attr( sanitize_text_field( $value['css_target'] ) );
+	if (isset($value['css_target'])) {
+		$value['css_target'] = esc_attr( sanitize_text_field( $value['css_target'] ) );
+	}
 
 	if( !isset($value['sanitize_svg_front_end']) || $value['sanitize_svg_front_end'] !== 'on' ) {
 		$value['sanitize_svg_front_end'] = false;

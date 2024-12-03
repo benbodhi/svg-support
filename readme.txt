@@ -167,6 +167,10 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 == Changelog ==
 
 = 2.5.9 =
+* **New Features**:
+    - Added new Advanced Mode setting "Skip Nested SVGs" to control inlining of SVGs within containers (for example: nested SVGs in Gutenberg Cover blocks)
+* **Fixes**:
+    - PHP Warning about undefined array key "css_target" in admin init.php
 * **Security Enhancements**:
     - Added nonce verification for non-REST uploads to prevent CSRF attacks
     - Improved MIME type validation for SVG files
@@ -182,8 +186,8 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 * **General Updates**:
     - Updated security documentation
     - Refined error messaging for better user experience
-* **New Features**:
-    - Added new Advanced Mode setting "Skip Nested SVGs" to control inlining of SVGs within containers (for example: nested SVGs in Gutenberg Cover blocks)
+	- Removed some unnecessary console logging
+
 
 
 
