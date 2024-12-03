@@ -175,6 +175,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 * **Fixes**:
     - PHP Warning about undefined array key "css_target" in admin init.php
     - Fixed "not allowed to upload this file type" error on multisite installations
+    - Fixed duplicate meta entries for inline featured images preventing post saves
+    - Added automatic cleanup of duplicate meta entries during plugin update
+    - Improved handling of featured image meta to prevent duplicate entries
 
 * **Security Enhancements**:
     - Added nonce verification for non-REST uploads to prevent CSRF attacks
@@ -191,7 +194,8 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
     - Added proper plugin asset handling and alt text for admin images
     - Enhanced multisite compatibility with proper role and capability checks
     - Added network-level upload permission validation
-	
+    - Added AJAX hooks for featured image inline toggle
+
 * **General Updates**:
     - Updated security documentation
     - Refined error messaging for better user experience

@@ -506,3 +506,40 @@ function bodhi_svgs_rest_pre_upload($file, $request) {
     return $file;
 }
 add_filter('rest_pre_upload_file', 'bodhi_svgs_rest_pre_upload', 10, 2);
+
+/**
+ * Clean up duplicate inline_featured_image meta entries
+ */
+function bodhi_svgs_cleanup_duplicate_meta() {
+    global $wpdb;
+    
+    // Find all posts with duplicate inline_featured_image meta
+    $duplicates = $wpdb->get_results("
+        SELECT post_id, COUNT(*) as count 
+        FROM {$wpdb->postmeta} 
+        WHERE meta_key = 'inline_featured_image' 
+        GROUP BY post_id 
+        HAVING count > 1
+    ");
+
+    // For each post with duplicates
+    foreach ($duplicates as $duplicate) {
+        // Get all meta values for this post
+        $meta_values = $wpdb->get_results($wpdb->prepare("
+            SELECT meta_id, meta_value 
+            FROM {$wpdb->postmeta} 
+            WHERE post_id = %d 
+            AND meta_key = 'inline_featured_image' 
+            ORDER BY meta_id DESC
+        ", $duplicate->post_id));
+
+        // Keep the most recent value
+        $keep_value = $meta_values[0]->meta_value;
+        
+        // Delete all meta entries for this post
+        delete_post_meta($duplicate->post_id, 'inline_featured_image');
+        
+        // Add back the single value we want to keep
+        add_post_meta($duplicate->post_id, 'inline_featured_image', $keep_value);
+    }
+}

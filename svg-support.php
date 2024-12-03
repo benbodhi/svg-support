@@ -23,7 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 global $bodhi_svgs_options;
 $bodhi_svgs_options = array();										// Defining global array
-$svgs_plugin_version = '2.5.9';										// for use on admin pages
+// $svgs_plugin_version = '2.5.9';										// for use on admin pages
+define('BODHI_SVGS_VERSION', get_file_data(__FILE__, array('Version' => 'Version'))['Version']);
 $plugin_file = plugin_basename(__FILE__);							// plugin file for reference
 define( 'BODHI_SVGS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );	// define the absolute plugin path for includes
 define( 'BODHI_SVGS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );		// define the plugin url for use in enqueue
@@ -68,24 +69,18 @@ include( BODHI_SVGS_PLUGIN_PATH . 'functions/featured-image.php' );			// allow i
 
 /**
  * Version based conditional / Check for stored plugin version
- *
- * Versions prior to 2.3 did not store the version number,
- * If no version number is stored, store current plugin version number.
- * If there is a version number stored, update it with the new version number.
  */
-// get the stored plugin version
-$svgs_plugin_version_stored = get_option( 'bodhi_svgs_plugin_version' );
-// only run this if there is no stored version number (have never stored the number in previous versions)
-if ( empty( $svgs_plugin_version_stored ) ) {
+$svgs_plugin_version_stored = get_option('bodhi_svgs_plugin_version');
 
-	// add plugin version number to options table
-	update_option( 'bodhi_svgs_plugin_version', $svgs_plugin_version );
-
-} else {
-
-	// update plugin version number in options table
-	update_option( 'bodhi_svgs_plugin_version', $svgs_plugin_version );
-
+// If updating from an older version
+if ( $svgs_plugin_version_stored !== BODHI_SVGS_VERSION ) {
+    // Run cleanup if updating from version before meta fix
+    if ( version_compare( $svgs_plugin_version_stored, '2.5.9', '<' ) ) {
+        bodhi_svgs_cleanup_duplicate_meta();
+    }
+    
+    // Update stored version number
+    update_option('bodhi_svgs_plugin_version', BODHI_SVGS_VERSION);
 }
 
 /**

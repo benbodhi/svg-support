@@ -2,14 +2,12 @@
 /**
  * Settings Page Markup
  */
-// make plugin version available
-global $svgs_plugin_version;
 ?>
 
 <div class="wrap">
 
 	<div id="icon-upload" class="icon32"></div>
-	<h2><?php esc_html_e( 'SVG Support Settings and Usage', 'svg-support' ); ?><span class="svgs-version">Version <?php echo esc_attr($svgs_plugin_version); ?></span></h2>
+	<h2><?php esc_html_e( 'SVG Support Settings and Usage', 'svg-support' ); ?><span class="svgs-version">Version <?php echo esc_attr(BODHI_SVGS_VERSION); ?></span></h2>
 
 	<div id="poststuff">
 
