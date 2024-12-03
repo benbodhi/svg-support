@@ -54,7 +54,7 @@
 				<h3><span><?php esc_html_e( 'Send Some Love', 'svg-support' ); ?></span></h3>
 				<div class="inside">
 
-					<p><?php esc_html_e( 'SVG Support has grown to be installed on 800,000+ active websites. That\'s insane! It\'s developed and maintained by one person alone. If you find it useful, please consider donating to help keep it going. I truly appreciate any contribution.', 'svg-support' ); ?></p>
+					<p><?php esc_html_e( 'SVG Support has grown to be installed on 1,000,000+ active websites. That\'s insane! It\'s developed and maintained by one person alone. If you find it useful, please consider donating to help keep it going. I truly appreciate any contribution.', 'svg-support' ); ?></p>
 					<p><strong>
 						<?php esc_html_e( 'BTC: 1qF8r2HkTLifND7WLGfWmvxfXc9ze55DZ', 'svg-support' ); ?><br/>
 						<?php esc_html_e( 'ETH: 0x599695Eb51aFe2e5a0DAD60aD9c89Bc8f10B54f4', 'svg-support' ); ?>
