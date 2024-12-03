@@ -44,7 +44,12 @@ if ( bodhi_svgs_advanced_mode() ) {
 function bodhi_svgs_save_featured_image_meta( $post_id, $post, $update ) {
 
 	// Verify nonce
-	if ( ! isset( $_POST['bodhi_svgs_featured_image_nonce'] ) || ! wp_verify_nonce( $_POST['bodhi_svgs_featured_image_nonce'], 'bodhi_svgs_save_featured_image_meta' ) ) {
+	if ( ! isset( $_POST['bodhi_svgs_featured_image_nonce'] ) || 
+		! wp_verify_nonce( 
+			sanitize_text_field( wp_unslash( $_POST['bodhi_svgs_featured_image_nonce'] ) ), 
+			'bodhi_svgs_save_featured_image_meta' 
+		) 
+	) {
 		return $post_id;
 	}
 

@@ -9,6 +9,14 @@
   ],
   "creatorBuild" : "34576",
   "files" : {
+    "\/.gitignore" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/.gitignore",
+      "oF" : 0
+    },
     "\/admin\/admin-init.php" : {
       "cB" : 0,
       "ft" : 8192,
@@ -321,6 +329,25 @@
       "oA" : 2,
       "oAP" : "\/languages\/svgsupport.pot",
       "oF" : 0
+    },
+    "\/README.md" : {
+      "cB" : 0,
+      "cS" : 0,
+      "eF" : 1,
+      "eL" : 1,
+      "ema" : 1,
+      "eSQ" : 1,
+      "ft" : 4096,
+      "hM" : 0,
+      "oA" : 0,
+      "oAP" : "\/README.html",
+      "oF" : 0,
+      "oFM" : 0,
+      "oS" : 0,
+      "pHT" : 0,
+      "pME" : 1,
+      "rFN" : 0,
+      "uCM" : 0
     },
     "\/readme.txt" : {
       "cB" : 0,
@@ -1036,7 +1063,7 @@
   },
   "projectAttributes" : {
     "creationDate" : 507572464,
-    "displayValue" : "trunk",
+    "displayValue" : "svg-support",
     "displayValueWasSetByUser" : 0,
     "iconImageName" : "\/svg-support.png",
     "iconImageWasSetByUser" : 1

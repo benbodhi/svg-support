@@ -295,67 +295,6 @@ function bodhi_svgs_is_gzipped( $contents ) {
 
 }
 
-// /**
-//  * Pre-filter for handling SVG uploads.
-//  *
-//  * This function checks if the uploaded file is an SVG and applies sanitization if required.
-//  *
-//  * @param array $file The uploaded file data.
-//  *
-//  * @return array The modified file data.
-//  */
-// function bodhi_svgs_sanitize_svg($file) {
-// 	global $bodhi_svgs_options;
-
-// 	$file_path = $file['tmp_name'];
-// 	$file_name = $file['name'];
-
-// 	// Check if the file has a .svg extension
-// 	$is_svg_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION)) === 'svg';
-
-// 	// Check if the file contains SVG content
-// 	$is_svg_content = false;
-// 	if ($is_svg_extension && file_exists($file_path)) {
-// 		// Use file_get_contents to read the file contents
-// 		$file_content = file_get_contents($file_path);
-
-// 		if ($file_content === false) {
-// 			$file['error'] = __("There was an error reading the SVG file for sanitization.", 'svg-support');
-// 			return $file;
-// 		}
-
-// 		$is_svg_content = preg_match('/<svg[^>]*xmlns="http:\/\/www\.w3\.org\/2000\/svg"/', $file_content);
-// 	}
-
-// 	// If the file is an SVG based on extension or content
-// 	if ($is_svg_extension || $is_svg_content) {
-// 		// Get the roles that do not require SVG sanitization
-// 		$sanitize_on_upload_roles_array = (array) $bodhi_svgs_options['sanitize_on_upload_roles'];
-// 		$user = wp_get_current_user();
-// 		$current_user_roles = (array) $user->roles;
-
-// 		// Check if the current user's roles intersect with the roles that do not need sanitization
-// 		$no_sanitize_needed = array_intersect($sanitize_on_upload_roles_array, $current_user_roles);
-
-// 		// Check if the user has the capability to upload SVGs
-// 		$can_upload_files = current_user_can('upload_files');
-
-// 		// Force sanitize unless user is in roles that bypass sanitization
-// 		if ($can_upload_files && empty($no_sanitize_needed)) {
-// 			if (!bodhi_svgs_sanitize($file_path)) {
-// 				$file['error'] = __("Sorry, this file couldn't be sanitized for security reasons and wasn't uploaded.", 'svg-support');
-// 				return $file;
-// 			}
-// 		}
-
-// 		return $file;
-// 	}
-
-// 	return $file;
-// }
-// // Add filter to handle upload pre-filtering for sanitization
-// add_filter('wp_handle_upload_prefilter', 'bodhi_svgs_sanitize_svg');
-
 /**
  * Pre-filter for handling SVG uploads.
  *
@@ -368,11 +307,32 @@ function bodhi_svgs_is_gzipped( $contents ) {
 function bodhi_svgs_sanitize_svg($file) {
 	global $bodhi_svgs_options;
 
+	// Verify nonce for non-REST requests
+	if (!defined('REST_REQUEST') && !wp_verify_nonce(
+		sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'] ?? '')), 
+		'media-form'
+	)) {
+		$file['error'] = __('Security check failed.', 'svg-support');
+		return $file;
+	}
+
 	$file_path = $file['tmp_name'];
 	$file_name = $file['name'];
 
 	// Check if the file has a .svg extension
 	$is_svg_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION)) === 'svg';
+
+	// Early MIME type verification for SVG files
+	if ($is_svg_extension) {
+		$finfo = finfo_open(FILEINFO_MIME_TYPE);
+		$real_mime = finfo_file($finfo, $file_path);
+		finfo_close($finfo);
+		
+		if ($real_mime !== 'image/svg+xml') {
+			$file['error'] = __('File is not a valid SVG.', 'svg-support');
+			return $file;
+		}
+	}
 
 	// Check if the file contains SVG content
 	$is_svg_content = false;
@@ -424,8 +384,6 @@ function bodhi_svgs_sanitize_svg($file) {
 				return $file;
 			}
 		}
-
-		return $file;
 	}
 
 	return $file;
@@ -521,3 +479,30 @@ function bodhi_svgs_dimension_fallback( $image, $attachment_id, $size, $icon ) {
 
 }
 add_filter( 'wp_get_attachment_image_src', 'bodhi_svgs_dimension_fallback', 10, 4 );
+
+/**
+ * Pre-process SVG files uploaded via REST API
+ *
+ * @param array $file File data before processing
+ * @param array $request The full request payload
+ * @return array|WP_Error Modified file data or error
+ */
+function bodhi_svgs_rest_pre_upload($file, $request) {
+    if ($file['type'] === 'image/svg+xml') {
+        // Randomize filename for REST API uploads
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $random_name = wp_generate_password(12, false) . '.' . $ext;
+        $file['name'] = sanitize_file_name($random_name);
+
+        // Force sanitization
+        if (!bodhi_svgs_sanitize($file['tmp_name'])) {
+            return new WP_Error(
+                'svg_sanitization_failed',
+                __('SVG sanitization failed for security reasons.', 'svg-support'),
+                array('status' => 400)
+            );
+        }
+    }
+    return $file;
+}
+add_filter('rest_pre_upload_file', 'bodhi_svgs_rest_pre_upload', 10, 2);

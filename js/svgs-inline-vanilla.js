@@ -1,4 +1,7 @@
-// Wait for the document to be ready
+/* eslint-env browser */
+/* global svgSettings, ForceInlineSVGActive, cssTarget, frontSanitizationEnabled, DOMPurify */
+/* eslint-disable no-console */
+
 document.addEventListener("DOMContentLoaded", function(event) {
 
     let bodhisvgsReplacements = 0;
@@ -8,6 +11,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         // Ensure it's an image
         if (img.nodeName !== 'IMG') {
+            return;
+        }
+
+        // Skip nested SVGs only if the setting is enabled
+        if (svgSettings.skipNested && 
+            img.closest('.' + target) && 
+            img.closest('.' + target).querySelector('img[src*=".svg"]') !== img) {
             return;
         }
 
@@ -195,3 +205,4 @@ document.addEventListener("DOMContentLoaded", function(event) {
     })(); // Execute immediately
 
 });
+

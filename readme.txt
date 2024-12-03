@@ -5,7 +5,7 @@ Tags: svg, vector, safe svg, sanitization, mime type
 Requires at least: 4.8
 Tested up to: 6.6.2
 Requires PHP: 7.2
-Stable tag: 2.5.8
+Stable tag: 2.5.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,6 +165,27 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Changelog ==
+
+= 2.5.9 =
+* **Security Enhancements**:
+    - Added nonce verification for non-REST uploads to prevent CSRF attacks
+    - Improved MIME type validation for SVG files
+    - Enhanced file content validation to ensure only valid SVG files are processed
+    - Moved security checks earlier in the upload process for better efficiency
+* **Code Improvements**:
+    - Reorganized upload validation flow for better performance
+    - Added proper error messages for failed security checks
+    - Improved handling of REST API uploads
+    - Enhanced code documentation and inline comments
+    - Added proper plugin asset handling and alt text for admin images
+* **General Updates**:
+    - Updated security documentation
+    - Refined error messaging for better user experience
+* **New Features**:
+    - Added new Advanced Mode setting "Skip Nested SVGs" to control inlining of SVGs within containers (for example: nested SVGs in Gutenberg Cover blocks)
+
+
+
 
 = 2.5.8 =
 * **Security Enhancements**:
@@ -429,6 +450,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+= 2.5.9 =
+Important security update that adds enhanced upload validation, MIME type checking, and CSRF protection. Please backup before updating. No configuration changes required - all security improvements work automatically.
+
 = 2.5.8 =
 Improved security, enhanced SVG processing, and updated admin interface. Includes better sanitization and escaping practices. Please take a backup before updating!
 

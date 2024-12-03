@@ -250,21 +250,27 @@ global $svgs_plugin_version;
 											<label for="bodhi_svgs_settings[css_target]">
 												<input id="bodhi_svgs_settings[css_target]" class="all-options code" name="bodhi_svgs_settings[css_target]" type="text" value="<?php echo isset( $bodhi_svgs_options['css_target'] ) ? esc_attr($bodhi_svgs_options['css_target']) : ''; ?>"><br />
 												<small class="description">
-													<?php
-													esc_html_e( 'The default target class is', 'svg-support' );
-													?>
+													<?php esc_html_e( 'The default target class is', 'svg-support' ); ?>
 													<code><?php echo esc_html( 'style-svg' ); ?></code>.
-													<?php
-													esc_html_e( 'You can change it to your own class such as', 'svg-support' );
-													?>
+													<?php esc_html_e( 'You can change it to your own class such as', 'svg-support' ); ?>
 													<code><?php echo esc_html( 'my-class' ); ?></code>
-													<?php
-													esc_html_e( 'by typing it here. Leave blank to use the default class.', 'svg-support' );
-													?>
+													<?php esc_html_e( 'by typing it here. Leave blank to use the default class.', 'svg-support' ); ?>
 													<br>
 													<em><?php esc_html_e( 'Plugin can now go any level down to find your SVG! It will keep looking as long as the element with the target class has children. If it finds any IMG tags with .svg in the src URL, it will replace the IMG tag with your SVG code.', 'svg-support' ); ?></em>
 												</small>
+											</label>
+										</td>
+									</tr>
 
+									<tr valign="top" class="svgs-advanced">
+										<th scope="row">
+											<strong><?php esc_html_e( 'Skip Nested SVGs', 'svg-support' ); ?></strong>
+										</th>
+										<td>
+											<label for="bodhi_svgs_settings[skip_nested_svg]">
+												<input id="bodhi_svgs_settings[skip_nested_svg]" name="bodhi_svgs_settings[skip_nested_svg]" type="checkbox" value="1" <?php checked( isset( $bodhi_svgs_options['skip_nested_svg'] ) && $bodhi_svgs_options['skip_nested_svg'] == 1 ); ?> />
+												<?php esc_html_e( 'Yes', 'svg-support' ); ?>
+												<br><small class="description"><?php esc_html_e( 'When enabled, only the first SVG in a .style-svg container will be inlined. Useful for Gutenberg Cover blocks with nested SVG images.', 'svg-support' ); ?></small>
 											</label>
 										</td>
 									</tr>
@@ -378,7 +384,13 @@ global $svgs_plugin_version;
 					<div class="postbox">
 						<h3><span><?php esc_html_e( 'Compress and Optimize Images with ShortPixel', 'svg-support' ); ?></span></h3>
 						<div class="inside">
-							<?php echo '<a target="_blank" class="shortpixel-logo" href="https://shortpixel.com/h/af/OLKMLXE207471"><img src="' . esc_url( BODHI_SVGS_PLUGIN_URL . '/admin/img/shortpixel.png' ) . '" /></a>'; ?>
+							<?php
+							printf(
+								'<a target="_blank" class="shortpixel-logo" href="https://shortpixel.com/h/af/OLKMLXE207471"><img src="%s" alt="%s" /></a>',
+								esc_url(plugins_url('admin/img/shortpixel.png', BODHI_SVGS_PLUGIN_FILE)),
+								esc_attr__('ShortPixel logo', 'svg-support')
+							);
+							?>
 							<p><?php esc_html_e( 'Now that you\'ve set up SVG Support on your site, it\'s time to look at optimizing your existing images (jpg & png).', 'svg-support' ); ?></p>
 							<p><?php esc_html_e( 'ShortPixel improves website performance by reducing the size of your images. The results are no different in quality from the original, plus your originals are stored in a backup folder for you.', 'svg-support' ); ?></p>
 							<p><?php esc_html_e( 'If you upgrade to a paid plan, I\'ll receive a small commission... And that\'s really nice!', 'svg-support' ); ?></p>

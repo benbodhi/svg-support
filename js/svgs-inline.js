@@ -1,9 +1,21 @@
+/* eslint-env jquery */
+/* global svgSettings, ForceInlineSVGActive, cssTarget, frontSanitizationEnabled, DOMPurify, jQuery */
+/* eslint-disable no-console */
+
 jQuery(document).ready(function ($) {
 
     let bodhisvgsReplacements = 0;
+    var target;
 
     // Function to replace the img tag with the SVG
     function bodhisvgsReplace(img) {
+
+        // Skip nested SVGs only if the setting is enabled
+        if (svgSettings.skipNested && 
+            img.closest('.' + target).length && 
+            img.closest('.' + target).find('img[src*=".svg"]')[0] !== img[0]) {
+            return;
+        }
 
         var imgID = img.attr('id');
         var imgClass = img.attr('class');

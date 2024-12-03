@@ -124,6 +124,10 @@ function bodhi_svgs_inline() {
 		wp_register_script( 'bodhi_svg_inline', BODHI_SVGS_PLUGIN_URL . $bodhi_svgs_js_path, array( 'jquery' ), $svgs_plugin_version, $bodhi_svgs_js_footer );
 		wp_enqueue_script( 'bodhi_svg_inline' );
 
+		wp_localize_script('bodhi_svg_inline', 'svgSettings', array(
+			'skipNested' => !empty($bodhi_svgs_options['skip_nested_svg'])
+		));
+
 		wp_add_inline_script(
 			'bodhi_svg_inline',
 			sprintf(
