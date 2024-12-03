@@ -169,24 +169,33 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 = 2.5.9 =
 * **New Features**:
     - Added new Advanced Mode setting "Skip Nested SVGs" to control inlining of SVGs within containers (for example: nested SVGs in Gutenberg Cover blocks)
+    - Added proper multisite support for SVG uploads across subsites
+    - Added network administrator support for SVG uploads on all subsites
+
 * **Fixes**:
     - PHP Warning about undefined array key "css_target" in admin init.php
+    - Fixed "not allowed to upload this file type" error on multisite installations
+
 * **Security Enhancements**:
     - Added nonce verification for non-REST uploads to prevent CSRF attacks
     - Improved MIME type validation for SVG files
     - Enhanced file content validation to ensure only valid SVG files are processed
     - Moved security checks earlier in the upload process for better efficiency
     - Updated DOMPurify library to version 2.5.0 to address CVE-2024-47875
+
 * **Code Improvements**:
     - Reorganized upload validation flow for better performance
     - Added proper error messages for failed security checks
     - Improved handling of REST API uploads
     - Enhanced code documentation and inline comments
     - Added proper plugin asset handling and alt text for admin images
+    - Enhanced multisite compatibility with proper role and capability checks
+    - Added network-level upload permission validation
+	
 * **General Updates**:
     - Updated security documentation
     - Refined error messaging for better user experience
-	- Removed some unnecessary console logging
+    - Removed some unnecessary console logging
 
 
 
