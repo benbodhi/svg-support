@@ -172,6 +172,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
     - Improved MIME type validation for SVG files
     - Enhanced file content validation to ensure only valid SVG files are processed
     - Moved security checks earlier in the upload process for better efficiency
+    - Updated DOMPurify library to version 2.5.0 to address CVE-2024-47875
 * **Code Improvements**:
     - Reorganized upload validation flow for better performance
     - Added proper error messages for failed security checks
