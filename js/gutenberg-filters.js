@@ -1,7 +1,6 @@
 "use strict"
 
-const el = wp.element.createElement;
-const withState = wp.compose.withState;
+const { createElement, Fragment, useState } = wp.element;
 const withSelect = wp.data.withSelect;
 const withDispatch = wp.data.withDispatch;
 
@@ -11,47 +10,41 @@ wp.hooks.addFilter(
     wrapPostFeaturedImage
 );
 
-function wrapPostFeaturedImage( OriginalComponent ) {
-    return function( props ) {
-        return (
-            el(
-                wp.element.Fragment,
-                {},
-                '',
-                el(
-                    OriginalComponent,
-                    props
-                ),
-                el(
-                    composedCheckBox
-                )
+function wrapPostFeaturedImage(OriginalComponent) {
+    return function(props) {
+        return createElement(
+            Fragment,
+            {},
+            '',
+            createElement(
+                OriginalComponent,
+                props
+            ),
+            createElement(
+                composedCheckBox
             )
         );
     }
 }
 
-class CheckBoxCustom extends React.Component {
-    render() {
-        const {
-            meta,
-            updateInlineFeaturedSvg,
-        } = this.props;
+function CheckBoxCustom(props) {
+    const [isChecked, setIsChecked] = useState(props.meta.inline_featured_image);
+    const {
+        meta,
+        updateInlineFeaturedSvg,
+    } = props;
 
-        return (
-            el(
-                wp.components.CheckboxControl,
-                {
-                    label: "Render this SVG inline (Advanced)",
-                    checked: meta.inline_featured_image,
-                    onChange:
-                        ( value ) => {
-                            this.setState( { isChecked: value } );
-                            updateInlineFeaturedSvg( value, meta );
-                        }
-                }
-            )
-        )
-    }
+    return createElement(
+        wp.components.CheckboxControl,
+        {
+            label: "Render this SVG inline (Advanced)",
+            checked: isChecked,
+            onChange: (value) => {
+                setIsChecked(value);
+                updateInlineFeaturedSvg(value, meta);
+            }
+        }
+    );
 }
 
 const composedCheckBox = wp.compose.compose( [
