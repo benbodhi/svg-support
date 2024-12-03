@@ -1,6 +1,5 @@
 /* eslint-env jquery */
 /* global svgSettings, ForceInlineSVGActive, cssTarget, frontSanitizationEnabled, DOMPurify, jQuery */
-/* eslint-disable no-console */
 
 jQuery(document).ready(function ($) {
 
@@ -27,7 +26,7 @@ jQuery(document).ready(function ($) {
 
         // Ensure the URL ends with .svg before proceeding
         if (!imgURL.endsWith('svg')) {
-            console.log('Not an SVG:', imgURL);
+            // console.log('Not an SVG:', imgURL);
             return;
         }
 
@@ -61,7 +60,7 @@ jQuery(document).ready(function ($) {
 
             // If sanitization is enabled, sanitize the SVG code
             if (frontSanitizationEnabled === 'on' && $svg[0]['outerHTML'] != "") {
-                console.log('Sanitizing SVG:', imgURL);
+                // console.log('Sanitizing SVG:', imgURL);
                 $svg = DOMPurify.sanitize($svg[0]['outerHTML']);
             }
 
@@ -83,7 +82,7 @@ jQuery(document).ready(function ($) {
     // Wrap in IIFE so that it can be called again later as bodhisvgsInlineSupport();
     (bodhisvgsInlineSupport = function () {
 
-        console.log('Running bodhisvgsInlineSupport');
+        // console.log('Running bodhisvgsInlineSupport');
 
         // If force inline SVG option is active then add class
         if (ForceInlineSVGActive === 'true') {
@@ -135,14 +134,14 @@ jQuery(document).ready(function ($) {
             target = cssTarget !== 'img.' ? cssTarget.Bodhi : 'img.style-svg';
         }
 
-        console.log('Initial target:', target);
+        // console.log('Initial target:', target);
 
         // Ensure target is a string before applying replace method
         if (typeof target === 'string') {
             target = target.replace("img", "");
-            console.log('Modified target:', target);
+            // console.log('Modified target:', target);
         } else {
-            console.error('Target is not a string:', target);
+            // console.error('Target is not a string:', target);
             return;
         }
 

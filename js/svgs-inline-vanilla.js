@@ -1,6 +1,5 @@
 /* eslint-env browser */
 /* global svgSettings, ForceInlineSVGActive, cssTarget, frontSanitizationEnabled, DOMPurify */
-/* eslint-disable no-console */
 
 document.addEventListener("DOMContentLoaded", function(event) {
 
@@ -117,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     // Wrap in IIFE so that it can be called again later as bodhisvgsInlineSupport();
     (bodhisvgsInlineSupport = function() {
 
-        console.log('Running bodhisvgsInlineSupport');
+        // console.log('Running bodhisvgsInlineSupport');
 
         // If force inline SVG option is active then add class
         if (ForceInlineSVGActive === 'true') {
