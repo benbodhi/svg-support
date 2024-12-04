@@ -13,21 +13,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
             return;
         }
 
-        // Only process images that have the target class themselves
-        // OR are inside an element with the target class
-        // OR when force inline is active
         const hasTargetClass = img.classList.contains(target);
-        const insideTargetContainer = img.parentElement.closest('.' + target) !== null;
+        const parentHasTargetClass = img.parentElement.classList.contains(target);
+        const insideTargetContainer = img.closest('.' + target) !== null;
         
+        // First check if we should process at all
         if (ForceInlineSVGActive !== 'true' && !hasTargetClass && !insideTargetContainer) {
             return;
         }
 
-        // Skip nested SVGs only if:
-        // 1. The setting is enabled
-        // 2. The image is inside a container with the target class
-        // 3. The image itself doesn't have the target class
-        if (svgSettings.skipNested && insideTargetContainer && !hasTargetClass) {
+        // If skip nested is enabled, only skip if:
+        // 1. Image doesn't have target class AND
+        // 2. Image's parent is not the target container but is inside one
+        if (svgSettings.skipNested && !hasTargetClass && !parentHasTargetClass && insideTargetContainer) {
             return;
         }
 
