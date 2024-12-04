@@ -347,13 +347,8 @@ function bodhi_svgs_sanitize_svg($file) {
 			}
 			$file_content = wp_remote_retrieve_body($response);
 		} else {
-			// For local files, use WP_Filesystem
-			if (!function_exists('WP_Filesystem')) {
-				require_once ABSPATH . 'wp-admin/includes/file.php';
-			}
-			global $wp_filesystem;
-			WP_Filesystem();
-			$file_content = $wp_filesystem->get_contents($file_path);
+			// For local files, use direct file operations
+			$file_content = file_get_contents($file_path);
 		}
 
 		if ($file_content === false || empty($file_content)) {
@@ -379,8 +374,27 @@ function bodhi_svgs_sanitize_svg($file) {
 
 		// Force sanitize unless user is in roles that bypass sanitization
 		if ($can_upload_files && empty($no_sanitize_needed)) {
-			if (!bodhi_svgs_sanitize($file_path)) {
+			global $sanitizer;
+			
+			// Read file contents
+			$file_content = file_get_contents($file_path);
+			if ($file_content === false) {
+				$file['error'] = __("Unable to read SVG file for sanitization.", 'svg-support');
+				return $file;
+			}
+
+			// Sanitize the content
+			$clean_svg = $sanitizer->sanitize($file_content);
+			
+			if ($clean_svg === false) {
 				$file['error'] = __("Sorry, this file couldn't be sanitized for security reasons and wasn't uploaded.", 'svg-support');
+				return $file;
+			}
+
+			// Write sanitized content back
+			$write_result = file_put_contents($file_path, $clean_svg);
+			if ($write_result === false) {
+				$file['error'] = __("Unable to save sanitized SVG file.", 'svg-support');
 				return $file;
 			}
 		}
