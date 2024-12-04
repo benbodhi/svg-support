@@ -4,15 +4,25 @@
 jQuery(document).ready(function ($) {
 
     let bodhisvgsReplacements = 0;
-    var target;
+    let target;
 
     // Function to replace the img tag with the SVG
     function bodhisvgsReplace(img) {
+        // Only process images that have the target class themselves
+        // OR are inside an element with the target class
+        // OR when force inline is active
+        const hasTargetClass = img.hasClass(target);
+        const insideTargetContainer = img.closest('.' + target).length > 0;
+        
+        if (ForceInlineSVGActive !== 'true' && !hasTargetClass && !insideTargetContainer) {
+            return;
+        }
 
-        // Skip nested SVGs only if the setting is enabled
-        if (svgSettings.skipNested && 
-            img.closest('.' + target).length && 
-            img.closest('.' + target).find('img[src*=".svg"]')[0] !== img[0]) {
+        // Skip nested SVGs only if:
+        // 1. The setting is enabled
+        // 2. The image is inside a container with the target class
+        // 3. The image itself doesn't have the target class
+        if (svgSettings.skipNested && insideTargetContainer && !hasTargetClass) {
             return;
         }
 
@@ -20,13 +30,8 @@ jQuery(document).ready(function ($) {
         var imgClass = img.attr('class');
         var imgURL = img.attr('src');
 
-        // Set svg size to the original img size
-        // var imgWidth = $img.attr('width');
-        // var imgHeight = $img.attr('height');
-
         // Ensure the URL ends with .svg before proceeding
         if (!imgURL.endsWith('svg')) {
-            // console.log('Not an SVG:', imgURL);
             return;
         }
 
@@ -60,18 +65,17 @@ jQuery(document).ready(function ($) {
 
             // If sanitization is enabled, sanitize the SVG code
             if (frontSanitizationEnabled === 'on' && $svg[0]['outerHTML'] != "") {
-                // console.log('Sanitizing SVG:', imgURL);
                 $svg = DOMPurify.sanitize($svg[0]['outerHTML']);
             }
 
             // Replace image with new SVG
             img.replaceWith($svg);
 
-            // Trigger custom event after SVG is loaded
-            $(document).trigger('svg.loaded', [imgID]);
-
             // Increment the replacements counter
             bodhisvgsReplacements++;
+
+            // Trigger custom event after SVG is loaded
+            $(document).trigger('svg.loaded', [imgID]);
 
         }, 'xml').fail(function() {
             console.error('Failed to load SVG:', imgURL);
@@ -81,8 +85,6 @@ jQuery(document).ready(function ($) {
 
     // Wrap in IIFE so that it can be called again later as bodhisvgsInlineSupport();
     (bodhisvgsInlineSupport = function () {
-
-        // console.log('Running bodhisvgsInlineSupport');
 
         // If force inline SVG option is active then add class
         if (ForceInlineSVGActive === 'true') {
@@ -126,27 +128,22 @@ jQuery(document).ready(function ($) {
         };
         // End snippet to support IE11
 
-        // Check to see if user set alternate class
-        var target;
+        // Set target before we use it
         if (ForceInlineSVGActive === 'true') {
-            target = cssTarget.Bodhi !== 'img.' ? cssTarget.Bodhi : 'img.style-svg';
+            target = cssTarget.Bodhi !== 'img.' ? cssTarget.ForceInlineSVG : 'style-svg';
         } else {
-            target = cssTarget !== 'img.' ? cssTarget.Bodhi : 'img.style-svg';
+            target = cssTarget.Bodhi !== 'img.' ? cssTarget.Bodhi : 'style-svg';
         }
-
-        // console.log('Initial target:', target);
 
         // Ensure target is a string before applying replace method
         if (typeof target === 'string') {
-            target = target.replace("img", "");
-            // console.log('Modified target:', target);
+            target = target.replace("img.", "");
         } else {
-            // console.error('Target is not a string:', target);
             return;
         }
 
         // Replace images with SVGs based on the target class
-        $(target).each(function (index) {
+        $('.' + target).each(function (index) {
 
             // If image then send for replacement
             if (typeof $(this).attr('src') !== typeof undefined && $(this).attr('src') !== false) {

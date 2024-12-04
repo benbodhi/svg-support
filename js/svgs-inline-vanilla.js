@@ -4,19 +4,30 @@
 document.addEventListener("DOMContentLoaded", function(event) {
 
     let bodhisvgsReplacements = 0;
+    let target;
 
     // Function to replace the img tag with the SVG
     function bodhisvgsReplace(img) {
-
         // Ensure it's an image
         if (img.nodeName !== 'IMG') {
             return;
         }
 
-        // Skip nested SVGs only if the setting is enabled
-        if (svgSettings.skipNested && 
-            img.closest('.' + target) && 
-            img.closest('.' + target).querySelector('img[src*=".svg"]') !== img) {
+        // Only process images that have the target class themselves
+        // OR are inside an element with the target class
+        // OR when force inline is active
+        const hasTargetClass = img.classList.contains(target);
+        const insideTargetContainer = img.parentElement.closest('.' + target) !== null;
+        
+        if (ForceInlineSVGActive !== 'true' && !hasTargetClass && !insideTargetContainer) {
+            return;
+        }
+
+        // Skip nested SVGs only if:
+        // 1. The setting is enabled
+        // 2. The image is inside a container with the target class
+        // 3. The image itself doesn't have the target class
+        if (svgSettings.skipNested && insideTargetContainer && !hasTargetClass) {
             return;
         }
 
@@ -31,9 +42,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = function() {
-
             if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-
                 var data = xmlHttp.responseText;
 
                 // Parse the returned data to extract the SVG
@@ -67,10 +76,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
                 // If sanitization is enabled, sanitize the SVG code
                 if (frontSanitizationEnabled === 'on' && svg.outerHTML !== "") {
-                    var sanitizedSVG = DOMPurify.sanitize(svg.outerHTML); // Sanitize SVG code via DOMPurify library
-                    img.outerHTML = sanitizedSVG; // Replace img tag with sanitized SVG content
+                    var sanitizedSVG = DOMPurify.sanitize(svg.outerHTML);
+                    img.outerHTML = sanitizedSVG;
                 } else {
-                    // Replace image with new SVG directly
                     img.replaceWith(svg);
                 }
 
@@ -79,72 +87,40 @@ document.addEventListener("DOMContentLoaded", function(event) {
             } else if (xmlHttp.readyState === 4 && xmlHttp.status !== 200) {
                 console.error('Failed to load SVG:', imgURL);
             }
-
         };
 
-        // Open the XMLHttpRequest with GET method
         xmlHttp.open("GET", imgURL, false);
         xmlHttp.send(null);
-
     }
 
     // Function to iterate over nodes and replace images
     function bodhisvgsIterator(node) {
-
         if (node.childNodes.length > 0) {
-
             for (var i = 0; i < node.childNodes.length; i++) {
-
                 if (node.childNodes[i].nodeName === 'IMG') {
-
-                    // It's an image... replace it too
                     var img = node.childNodes[i];
                     bodhisvgsReplace(img);
-
                 } else {
-
-                    // Go to another level
                     bodhisvgsIterator(node.childNodes[i]);
-
                 }
             }
-
         }
-
     }
 
     // Wrap in IIFE so that it can be called again later as bodhisvgsInlineSupport();
     (bodhisvgsInlineSupport = function() {
-
-        // console.log('Running bodhisvgsInlineSupport');
-
         // If force inline SVG option is active then add class
         if (ForceInlineSVGActive === 'true') {
-
-            var allImages = document.getElementsByTagName('img'); // Find all images on page
-
-            // Loop on images
+            var allImages = document.getElementsByTagName('img');
             for (var i = 0; i < allImages.length; i++) {
-
                 if (typeof allImages[i].src !== 'undefined') {
-
-                    // Check if it has SVG
                     if (allImages[i].src.match(/\.(svg)/)) {
-
-                        // Add our class - if not already added
                         if (!allImages[i].classList.contains(cssTarget.ForceInlineSVG)) {
-
-                            // Add class now
                             allImages[i].classList.add(cssTarget.ForceInlineSVG);
-
                         }
-
                     }
-
                 }
-
             }
-
         }
 
         // Polyfill to support all older browsers
@@ -158,50 +134,37 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 var lastIndex = subjectString.lastIndexOf(searchString, position);
                 return lastIndex !== -1 && lastIndex === position;
             };
-        } // end polyfill
+        }
 
         // Another snippet to support IE11
         String.prototype.endsWith = function(pattern) {
             var d = this.length - pattern.length;
             return d >= 0 && this.lastIndexOf(pattern) === d;
         };
-        // End snippet to support IE11
 
-		// Check to see if user set an alternate class
-		var target;
-		if (ForceInlineSVGActive === 'true') {
-			target = (typeof cssTarget.Bodhi === 'string' ? cssTarget.ForceInlineSVG : 'style-svg');
-		} else {
-			target = (typeof cssTarget === 'string' ? cssTarget : 'style-svg');
-		}
-
-		// Ensure target is a string before attempting to use replace
-		if (typeof target === 'string') {
-			// Remove .img from class
-			target = target.replace("img.", "");
-		} else {
-			console.error('Target is not a string:', target);
-			return;
-		}
-
-        var allImages = document.getElementsByClassName(target); // find all images with force svg class
-
-        for (var i = 0; i < allImages.length; i++) {
-
-            if (typeof allImages[i].src === 'undefined') { // not an image
-
-                bodhisvgsIterator(allImages[i]); // Iterate through child nodes
-
-            } else {
-
-                var img = allImages[i];
-                bodhisvgsReplace(img);
-
-            }
-
+        // Set target before we use it
+        if (ForceInlineSVGActive === 'true') {
+            target = cssTarget.Bodhi !== 'img.' ? cssTarget.ForceInlineSVG : 'style-svg';
+        } else {
+            target = cssTarget.Bodhi !== 'img.' ? cssTarget.Bodhi : 'style-svg';
         }
 
-    })(); // Execute immediately
+        // Ensure target is a string before applying replace method
+        if (typeof target === 'string') {
+            target = target.replace("img.", "");
+        } else {
+            return;
+        }
 
+        // Replace images with SVGs based on the target class
+        document.querySelectorAll('.' + target).forEach(function(element) {
+            if (element.nodeName === 'IMG') {
+                bodhisvgsReplace(element);
+            } else {
+                bodhisvgsIterator(element);
+            }
+        });
+
+    })(); // Execute immediately
 });
 
