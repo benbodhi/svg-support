@@ -307,7 +307,10 @@
 										<td>
 											<label for="bodhi_svgs_settings[auto_insert_class]">
 												<input id="bodhi_svgs_settings[auto_insert_class]" name="bodhi_svgs_settings[auto_insert_class]" type="checkbox" <?php checked( isset( $bodhi_svgs_options['auto_insert_class'] ), true ); ?> />
-												<?php esc_html_e( 'Yes', 'svg-support' ); ?><br /><small class="description"><?php esc_html_e('Checking this will make sure that either the default class or the custom one you set in "CSS Class to target" option will be inserted into the style attributes of img tags when you insert SVG images into a post. Additionally, it will remove all of the default WordPress classes. It will leave normal image types as default and only affect SVG files.', 'svg-support' ); ?></small>
+												<?php esc_html_e( 'Yes', 'svg-support' ); ?><br />
+												<small class="description">
+													<?php esc_html_e('(Classic Editor Only) Checking this will make sure that either the default class or the custom one you set in "CSS Class to target" option will be inserted into the style attributes of img tags when you insert SVG images into a post. Additionally, it will remove all of the default WordPress classes. It will leave normal image types as default and only affect SVG files.', 'svg-support' ); ?>
+												</small>
 											</label>
 										</td>
 									</tr>
