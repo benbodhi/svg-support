@@ -9,6 +9,9 @@ Text Domain: 	svg-support
 Domain Path:	/languages
 License: 		GPLv2 or later
 License URI:	http://www.gnu.org/licenses/gpl-2.0.html
+Requires at least: 5.8
+Requires PHP: 	7.0
+Block: 			true
 
 	Copyright 2013 and beyond | Benbodhi (email : wp@benbodhi.com)
 

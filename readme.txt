@@ -1,7 +1,7 @@
 === SVG Support ===
 Contributors: Benbodhi
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z9R7JERS82EQQ
-Tags: svg, vector, safe svg, sanitization, mime type
+Tags: svg, vector, safe svg, sanitization, mime type, css, style, embed, img, inline, block
 Requires at least: 5.0
 Tested up to: 6.7.2
 Requires PHP: 7.4
@@ -25,6 +25,7 @@ SVG Support enables secure SVG uploads with powerful features for both basic use
 - Role-based access control
 - Advanced developer options
 - Multisite compatible
+- Full Block Editor (Gutenberg) compatibility
 
 🔒 **Security First**:
 - Built-in sanitization removes potentially harmful code
@@ -47,13 +48,23 @@ SVG Support enables secure SVG uploads with powerful features for both basic use
 == Usage ==
 
 **Basic Usage**:
-1. Install and activate SVG Support via your WordPress dashboard.
-2. Upload SVG files to your media library like any other image.
+- First, install and activate SVG Support via your WordPress dashboard
+- Upload SVG files to your media library like any other image
+- Works seamlessly with Image blocks, Cover blocks and featured images
 
 **Advanced Usage**:
-- Enable "Advanced Mode" for minification and inline rendering.
-- Add the `"style-svg"` class to `<img>` tags for inline rendering.
-- Customize with hooks and filters for tailored functionality.
+- Enable "Advanced Mode" for minification and inline rendering
+- Customize with hooks and filters for tailored functionality
+
+**Block Editor Usage**:
+- Use Advanced Mode to enable inline rendering:
+  - Add the `"style-svg"` class to Image blocks
+  - Add the `"style-svg"` class to Cover blocks to render SVG backgrounds inline
+- Use "Skip Nested SVGs" setting to control inline rendering of SVGs within Cover blocks
+
+**Classic Editor Usage**:
+- Use Advanced Mode to add the `"style-svg"` class to `<img>` tags for inline rendering
+- Enable "Auto Insert Class" option for automatic class insertion in Classic Editor
 
 **Common Issues & Solutions**:
 - SVG not displaying? Ensure dimensions are set in CSS.
