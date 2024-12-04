@@ -4,7 +4,7 @@ A powerful WordPress plugin that enables SVG uploads and provides advanced featu
 
 > **⚠️ Development Repository Notice**
 > 
-> This is the development version of SVG Support, equivalent to the SVN trunk. Code here may be unstable during active development. For production sites, please use the official release from the [WordPress.org plugin repository](https://wordpress.org/plugins/svg-support/).
+> This is the latest development version of SVG Support. Code here may be unstable during active development. For production sites, please use the official release from the [WordPress.org plugin repository](https://wordpress.org/plugins/svg-support/).
 >
 > The official plugin is managed via SVN as per WordPress.org standards. This GitHub repository serves as a development workspace and for issue tracking. Once changes are stable, they will be copied to the SVN repository for release.
 
