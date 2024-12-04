@@ -11,6 +11,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Securely upload SVG files to your media library, with built-in sanitization and advanced features for styling and animation.
 
+
 == Description ==
 
 **The complete SVG solution for WordPress - secure, flexible, and easy to use.**
@@ -42,6 +43,7 @@ SVG Support enables secure SVG uploads with powerful features for both basic use
 - Gutenberg compatible
 - Extensive hooks and filters
 
+
 == Usage ==
 
 **Basic Usage**:
@@ -55,7 +57,7 @@ SVG Support enables secure SVG uploads with powerful features for both basic use
 
 **Common Issues & Solutions**:
 - SVG not displaying? Ensure dimensions are set in CSS.
-- Need help? Use the support tab and I will do my best to assist you quickly.*
+- Need help? Use the support tab and I will do my best to assist you.
 
 
 == Spin up a test site ==
@@ -63,9 +65,11 @@ SVG Support enables secure SVG uploads with powerful features for both basic use
 With a single click, you can spin up a completely free test site to test SVG Support using TasteWP! No sign up, no cards, nothing! How cool is that? Give it a go:
 [Click Here to spin up a test site in seconds](https://tastewp.com/new?pre-installed-plugin-slug=svg-support&redirect=options-general.php%3Fpage%3Dsvg-support&ni=true)
 
+
 == Security ==
 
 SVG Support prioritizes security with automatic sanitization and role-based restrictions. Only trusted users should have upload permissions. Configure settings to balance functionality and security.
+
 
 == Feedback ==
 
@@ -78,9 +82,19 @@ Follow [@benbodhi](https://warpcast.com/benbodhi) on Warpcast
 *Note:* I hope you like this plugin! Please take a moment to [rate it](https://wordpress.org/support/view/plugin-reviews/svg-support?filter=5#postform).
 
 
+== Development & Contributing ==
+
+The development version of SVG Support is maintained on GitHub. Feel free to contribute:
+
+* Submit bug reports or feature suggestions: [GitHub Issues](https://github.com/benbodhi/svg-support/issues)
+* Contribute code via [Pull Requests](https://github.com/benbodhi/svg-support/pulls)
+* Development repository: [GitHub](https://github.com/benbodhi/svg-support)
+
+
 == Translations ==
 
 Contribute translations [here](https://translate.wordpress.org/projects/wp-plugins/svg-support). New to translating? Check the [Translator Handbook](https://make.wordpress.org/polyglots/handbook/tools/glotpress-translate-wordpress-org/).
+
 
 == Frequently Asked Questions ==
 
@@ -591,4 +605,3 @@ IMPORTANT, MAJOR CHANGES, BACKUP BEFORE UPDATING: Users that are inlining SVG wi
 
 = 1.0 =
 * Initial Release.
-

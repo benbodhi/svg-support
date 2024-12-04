@@ -38,8 +38,6 @@ function bodhi_svg_support_settings_page() {
 
 	}
 
-	// Swapped the global with this line to work with WordPress Bedrock on LEMP stack | https://wordpress.org/support/topic/settings-not-saving-24/
-	// global $bodhi_svgs_options;
 	$bodhi_svgs_options = get_option( 'bodhi_svgs_settings' );
 
 	require( BODHI_SVGS_PLUGIN_PATH . 'admin/svgs-settings-page.php' );
@@ -196,8 +194,11 @@ function bodhi_svgs_admin_footer_text( $default ) {
 
 	if ( bodhi_svgs_specific_pages_settings() || bodhi_svgs_specific_pages_media_library() ) {
 
-		/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
-		printf( esc_html__( 'If you like <strong>SVG Support</strong> please leave a %1$s&#9733;&#9733;&#9733;&#9733;&#9733;%2$s rating. A huge thanks in advance!', 'svg-support' ),
+		/* translators: 1: Opening strong tag, 2: Closing strong tag, 3: Opening anchor tag, 4: Closing anchor tag */
+		printf( 
+			esc_html__( 'If you like %1$sSVG Support%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thanks in advance!', 'svg-support' ),
+			'<strong>',
+			'</strong>',
 			'<a href="https://wordpress.org/support/view/plugin-reviews/svg-support?filter=5#postform" target="_blank" class="svgs-rating-link">',
 			'</a>'
 		);

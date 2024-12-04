@@ -463,9 +463,21 @@
 						<div class="inside">
 							<p><?php esc_html_e( 'Learn more about SVG Support on:', 'svg-support' ); ?><br/><a target="_blank" href="http://wordpress.org/plugins/svg-support/"><?php esc_html_e( 'The WordPress Plugin Repository', 'svg-support' ); ?></a></p>
 							<p><?php esc_html_e( 'Need help?', 'svg-support' ); ?><br/><a target="_blank" href="http://wordpress.org/support/plugin/svg-support"><?php esc_html_e( 'Visit The Support Forum', 'svg-support' ); ?></a></p>
-							<p><?php esc_html_e( 'Follow', 'svg-support' ); ?> <a target="_blank" href="https://twitter.com/svgsupport"><?php esc_html_e( '@SVGSupport', 'svg-support' ); ?></a> <?php esc_html_e( 'on Twitter', 'svg-support' ); ?></p>
+							<p>
+								<?php esc_html_e( 'Follow', 'svg-support' ); ?>
+								<a target="_blank" href="https://twitter.com/svgsupport"><?php esc_html_e( '@SVGSupport', 'svg-support' ); ?></a>
+								<?php esc_html_e( 'on Twitter', 'svg-support' ); ?>
+							</p>
+							<p>
+								<?php esc_html_e( 'Follow Benbodhi on:', 'svg-support' ); ?><br/>
+								<a target="_blank" href="https://twitter.com/benbodhi"><?php esc_html_e( 'Twitter', 'svg-support' ); ?></a> | 
+								<a target="_blank" href="https://warpcast.com/benbodhi"><?php esc_html_e( 'Warpcast', 'svg-support' ); ?></a>
+							</p>
 							<p>&copy; <?php esc_html_e( 'Benbodhi', 'svg-support' ); ?> | <a target="_blank" href="https://benbodhi.com/">Benbodhi.com</a></p>
-							<p><?php esc_html_e( 'Thanks for your support, please consider donating.', 'svg-support' ); ?><br/><a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z9R7JERS82EQQ&source=url"><?php esc_html_e( 'Donate using PayPal', 'svg-support' ); ?></a></p>
+							<p>
+								<?php esc_html_e( 'Thanks for your support, please consider donating.', 'svg-support' ); ?><br/>
+								<a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z9R7JERS82EQQ&source=url"><?php esc_html_e( 'Donate using PayPal', 'svg-support' ); ?></a>
+							</p>
 						</div> <!-- .inside -->
 					</div> <!-- .postbox -->
 
