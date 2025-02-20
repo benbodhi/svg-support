@@ -128,7 +128,7 @@ function bodhi_svgs_generate_svg_attachment_metadata( $metadata, $attachment_id 
 		$metadata = array(
 			'width'		=> intval($dimensions->width),
 			'height'	=> intval($dimensions->height),
-			'file'		=> $filename
+			'file'		=> $relative_path
 		);
 
 		$height = intval($dimensions->height);
