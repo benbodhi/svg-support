@@ -2,17 +2,26 @@
 .DS_Store
 **/.DS_Store
 
-# Composer files
+# First ignore all vendor
 /vendor/*
+
+# Then explicitly un-ignore specific files and directories
+# Composer autoloader files
 !/vendor/composer/
 !/vendor/autoload.php
 
-# DOMPurify - just the minified file we use
+# DOMPurify minified file
+!/vendor/DOMPurify/
+/vendor/DOMPurify/*
 !/vendor/DOMPurify/DOMPurify.min.js
 
-# SVG Sanitizer - only the src directory
+# SVG Sanitizer src directory
+!/vendor/enshrined/
+/vendor/enshrined/*
+!/vendor/enshrined/svg-sanitize/
+/vendor/enshrined/svg-sanitize/*
 !/vendor/enshrined/svg-sanitize/src/
 
-# Ignore everything else
+# Other ignores
 composer.lock
 /vendor.backup/
