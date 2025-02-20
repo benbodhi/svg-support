@@ -8,9 +8,9 @@
             "type": "package",
             "package": {
                 "name": "cure53/dompurify",
-                "version": "2.5.0",
+                "version": "2.5.8",
                 "dist": {
-                    "url": "https://github.com/cure53/DOMPurify/archive/refs/tags/2.5.0.zip",
+                    "url": "https://github.com/cure53/DOMPurify/archive/refs/tags/2.5.8.zip",
                     "type": "zip"
                 }
             }
@@ -18,8 +18,8 @@
     ],
     "require": {
         "php": ">=7.4",
-        "enshrined/svg-sanitize": "^0.14.1",
-        "cure53/dompurify": "2.5.0"
+        "enshrined/svg-sanitize": "^0.21.0",
+        "cure53/dompurify": "2.5.8"
     },
     "scripts": {
         "post-install-cmd": [
