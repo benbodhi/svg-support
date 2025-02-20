@@ -165,6 +165,8 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
     - Added automatic cleanup of duplicate meta entries during plugin update
     - Improved handling of featured image meta to prevent duplicate entries
     - Updated and refactored Gutenberg featured image checkbox to use modern React hooks instead of deprecated withState
+    - Fixed missing file path in SVG attachment metadata causing issues with WPML Media Translation
+    - Fixed jQuery dependency only being required when not using vanilla JS option
 
 * **Security Enhancements**:
     - Added nonce verification for non-REST uploads to prevent CSRF attacks
@@ -182,7 +184,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
     - Enhanced multisite compatibility with proper role and capability checks
     - Added network-level upload permission validation
     - Added AJAX hooks for featured image inline toggle
-	- Enqueue minified Gutenberg filters script instead of expanded version
+    - Enqueue minified Gutenberg filters script instead of expanded version
 
 * **General Updates**:
     - Updated security documentation

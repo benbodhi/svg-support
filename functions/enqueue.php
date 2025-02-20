@@ -121,7 +121,10 @@ function bodhi_svgs_inline() {
 
 		$bodhi_svgs_js_path = 'js/' . $bodhi_svgs_js_folder . 'svgs-inline' . $bodhi_svgs_js_vanilla . $bodhi_svgs_js_file . '.js';
 
-		wp_register_script( 'bodhi_svg_inline', BODHI_SVGS_PLUGIN_URL . $bodhi_svgs_js_path, array( 'jquery' ), $svgs_plugin_version, $bodhi_svgs_js_footer );
+		// Only change: Make jQuery dependency conditional on vanilla JS setting
+		$bodhi_svgs_dependencies = ! empty( $bodhi_svgs_options['use_vanilla_js'] ) ? array() : array( 'jquery' );
+
+		wp_register_script( 'bodhi_svg_inline', BODHI_SVGS_PLUGIN_URL . $bodhi_svgs_js_path, $bodhi_svgs_dependencies, $svgs_plugin_version, $bodhi_svgs_js_footer );
 		wp_enqueue_script( 'bodhi_svg_inline' );
 
 		wp_localize_script('bodhi_svg_inline', 'svgSettings', array(
