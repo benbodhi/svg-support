@@ -168,6 +168,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
     - Updated and improved sanitization options for both frontend and admin
 
 * **Code Improvements**:
+    - Changed synchronous XMLHttpRequest to asynchronous in vanilla JS version to improve performance and remove Chrome deprecation warnings
     - Removed console logging statements from JavaScript files for cleaner browser console
     - Reorganized upload validation flow for better performance
     - Added proper error messages for failed security checks

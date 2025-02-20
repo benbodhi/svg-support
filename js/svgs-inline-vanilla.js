@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
             }
         };
 
-        xmlHttp.open("GET", imgURL, false);
+        xmlHttp.open("GET", imgURL, true);
         xmlHttp.send(null);
     }
 
