@@ -2,7 +2,7 @@
 Contributors: Benbodhi
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z9R7JERS82EQQ
 Tags: svg, vector, safe svg, sanitization, mime type
-Requires at least: 5.0
+Requires at least: 5.8
 Tested up to: 6.7.2
 Requires PHP: 7.4
 Stable tag: 2.5.9
@@ -179,6 +179,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
     - Added network-level upload permission validation
     - Added AJAX hooks for featured image inline toggle
     - Enqueue minified Gutenberg filters script instead of expanded version
+    - Added better version update handling
 
 * **Fixes**:
     - PHP Warning about undefined array key "css_target" in admin init.php
