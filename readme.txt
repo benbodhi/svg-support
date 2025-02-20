@@ -152,6 +152,10 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 == Changelog ==
 
+= 2.5.10 =
+* **Fixes**:
+    - Fixed issue with upload checks preventing plugin uploads
+
 = 2.5.9 =
 * **New Features**:
     - Added new Advanced Mode setting "Skip Nested SVGs" to control inlining of SVGs within containers (for example: nested SVGs in Gutenberg Cover blocks)
