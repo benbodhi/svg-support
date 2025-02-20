@@ -6,5 +6,13 @@
 /vendor/*
 !/vendor/composer/
 !/vendor/autoload.php
-/vendor.backup/
+
+# DOMPurify - just the minified file we use
+!/vendor/DOMPurify/DOMPurify.min.js
+
+# SVG Sanitizer - only the src directory
+!/vendor/enshrined/svg-sanitize/src/
+
+# Ignore everything else
 composer.lock
+/vendor.backup/
