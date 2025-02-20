@@ -25,8 +25,14 @@ if ( class_exists( '\enshrined\svgSanitize\data\AllowedTags' ) ) {
         }
     }
 } else {
-    // Log the error for debugging
-    error_log('SVG Support: SVG Sanitizer library not found. Some features may be limited.');
+    // Add an admin notice if the sanitizer isn't available
+    add_action('admin_notices', function() {
+        if (current_user_can('manage_options')) {
+            echo '<div class="notice notice-warning is-dismissible"><p>' . 
+                 esc_html__('SVG Support: SVG Sanitizer library not found. Some features may be limited.', 'svg-support') . 
+                 '</p></div>';
+        }
+    });
     
     // Fallback class if the sanitizer isn't available
     class bodhi_svg_tags {

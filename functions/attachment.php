@@ -523,46 +523,47 @@ add_filter('rest_pre_upload_file', 'bodhi_svgs_rest_pre_upload', 10, 2);
 
 /**
  * Clean up duplicate inline_featured_image meta entries
+ * 
+ * This is a one-time migration function that runs only when upgrading to version 2.5.9
+ * to fix duplicate meta entries caused by older plugin versions. The slow meta query
+ * is intentional and necessary for this cleanup operation.
+ *
+ * @since 2.5.9
+ * @see svg-support.php Version upgrade handling
+ * @return void
  */
 function bodhi_svgs_cleanup_duplicate_meta() {
-    global $wpdb;
+    // Use WP_Query with optimized parameters and batching
+    $batch_size = 100;
+    $offset = 0;
     
-    // Attempt to get cached results first
-    $cache_key = 'bodhi_svgs_duplicate_meta';
-    $duplicates = wp_cache_get($cache_key);
+    do {
+        $query = new WP_Query(array(
+            'post_type'      => 'any',
+            'posts_per_page' => $batch_size,
+            'offset'         => $offset,
+            'meta_query'     => array(
+                array(
+                    'key'     => 'inline_featured_image',
+                    'compare' => 'EXISTS'
+                )
+            ),
+            'no_found_rows'  => true,
+            'fields'         => 'ids'
+        ));
 
-    if ($duplicates === false) {
-        // Find all posts with duplicate inline_featured_image meta
-        $duplicates = $wpdb->get_results("
-            SELECT post_id, COUNT(*) as count 
-            FROM {$wpdb->postmeta} 
-            WHERE meta_key = 'inline_featured_image' 
-            GROUP BY post_id 
-            HAVING count > 1
-        ");
+        if ($query->have_posts()) {
+            foreach ($query->posts as $post_id) {
+                $meta_values = get_post_meta($post_id, 'inline_featured_image');
+                
+                if (count($meta_values) > 1) {
+                    $keep_value = end($meta_values);
+                    delete_post_meta($post_id, 'inline_featured_image');
+                    add_post_meta($post_id, 'inline_featured_image', $keep_value);
+                }
+            }
+        }
 
-        // Cache the results for future use
-        wp_cache_set($cache_key, $duplicates, '', 3600); // Cache for 1 hour
-    }
-
-    // For each post with duplicates
-    foreach ($duplicates as $duplicate) {
-        // Get all meta values for this post
-        $meta_values = $wpdb->get_results($wpdb->prepare("
-            SELECT meta_id, meta_value 
-            FROM {$wpdb->postmeta} 
-            WHERE post_id = %d 
-            AND meta_key = 'inline_featured_image' 
-            ORDER BY meta_id DESC
-        ", $duplicate->post_id));
-
-        // Keep the most recent value
-        $keep_value = $meta_values[0]->meta_value;
-        
-        // Delete all meta entries for this post
-        delete_post_meta($duplicate->post_id, 'inline_featured_image');
-        
-        // Add back the single value we want to keep
-        add_post_meta($duplicate->post_id, 'inline_featured_image', $keep_value);
-    }
+        $offset += $batch_size;
+    } while (count($query->posts) === $batch_size);
 }

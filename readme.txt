@@ -1,7 +1,7 @@
 === SVG Support ===
 Contributors: Benbodhi
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z9R7JERS82EQQ
-Tags: svg, vector, safe svg, sanitization, mime type, css, style, embed, img, inline, block
+Tags: svg, vector, safe svg, sanitization, mime type
 Requires at least: 5.0
 Tested up to: 6.7.2
 Requires PHP: 7.4

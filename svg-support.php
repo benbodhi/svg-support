@@ -70,20 +70,45 @@ include( BODHI_SVGS_PLUGIN_PATH . 'functions/featured-image.php' );			// allow i
 // }
 
 /**
- * Version based conditional / Check for stored plugin version
+ * Handle version updates and migrations
+ * 
+ * Handles version comparisons for all format types:
+ * - Single digit versions (1, 2)
+ * - Zero versions (0, 0.1, 0.5.26)
+ * - Two-digit versions (1.0, 2.1, 2.5)
+ * - Three-digit versions (1.5.17, 2.5.9)
+ * - Fresh installs ('0.0.0')
+ * - Legacy versions (null, empty, invalid)
  */
-$svgs_plugin_version_stored = get_option('bodhi_svgs_plugin_version');
-
-// If updating from an older version
-if ( $svgs_plugin_version_stored !== BODHI_SVGS_VERSION ) {
-    // Run cleanup if updating from version before meta fix
-    if ( version_compare( $svgs_plugin_version_stored, '2.5.9', '<' ) ) {
+function bodhi_svgs_version_updates() {
+    // Get stored version, defaulting to '0.0.0' if none exists
+    // This handles null, empty string, boolean false, and invalid version strings
+    $stored_version = get_option('bodhi_svgs_plugin_version', '0.0.0');
+    
+    // Ensure we have a valid version string
+    if (!is_string($stored_version) || empty($stored_version)) {
+        $stored_version = '0.0.0';
+    }
+    
+    // Skip if already at current version
+    if ($stored_version === BODHI_SVGS_VERSION) {
+        return;
+    }
+    
+    // Run version-specific updates
+    // This will run for all versions before 2.5.9, including:
+    // - All 0.x versions
+    // - All 1.x versions
+    // - All 2.x versions up to 2.5.8
+    // - Fresh installs and invalid versions ('0.0.0')
+    if (version_compare($stored_version, '2.5.9', '<')) {
         bodhi_svgs_cleanup_duplicate_meta();
     }
     
-    // Update stored version number
+    // Update version in database
     update_option('bodhi_svgs_plugin_version', BODHI_SVGS_VERSION);
 }
+add_action('admin_init', 'bodhi_svgs_version_updates');
 
 /**
  * Defaults for better security in versions >= 2.5
