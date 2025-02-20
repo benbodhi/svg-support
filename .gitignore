@@ -3,6 +3,8 @@
 **/.DS_Store
 
 # Composer files
-/vendor/
+/vendor/*
+!/vendor/composer/
+!/vendor/autoload.php
 /vendor.backup/
 composer.lock
