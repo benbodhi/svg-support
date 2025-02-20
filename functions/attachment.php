@@ -554,3 +554,50 @@ function bodhi_svgs_cleanup_duplicate_meta() {
         $offset += $batch_size;
     } while (count($query->posts) === $batch_size);
 }
+
+function bodhi_svgs_handle_upload_check($fileinfo) {
+    if ($fileinfo['type'] === 'image/svg+xml') {
+        global $bodhi_last_upload_info;
+        $bodhi_last_upload_info = $fileinfo;
+    }
+    return $fileinfo;
+}
+add_filter('wp_handle_upload', 'bodhi_svgs_handle_upload_check');
+
+function bodhi_svgs_rest_insert_attachment($prepared_attachment, $request) {
+    if ($request->get_header('content-type') !== 'image/svg+xml') {
+        return $prepared_attachment;
+    }
+    
+    global $bodhi_svgs_options;
+    $user = wp_get_current_user();
+    $current_user_roles = (array) $user->roles;
+    $sanitize_on_upload_roles_array = (array) $bodhi_svgs_options['sanitize_on_upload_roles'];
+    
+    $should_sanitize = empty(array_intersect($sanitize_on_upload_roles_array, $current_user_roles));
+    
+    if ($should_sanitize) {
+        $file_path = get_attached_file($prepared_attachment->ID);
+        if (!$file_path) {
+            global $bodhi_last_upload_info;
+            if (isset($bodhi_last_upload_info['file'])) {
+                $file_path = $bodhi_last_upload_info['file'];
+            }
+        }
+        
+        if ($file_path && file_exists($file_path)) {
+            global $sanitizer;
+            $file_content = file_get_contents($file_path);
+            
+            if ($file_content !== false) {
+                $clean_svg = $sanitizer->sanitize($file_content);
+                if ($clean_svg !== false) {
+                    file_put_contents($file_path, $clean_svg);
+                }
+            }
+        }
+    }
+    
+    return $prepared_attachment;
+}
+add_filter('rest_insert_attachment', 'bodhi_svgs_rest_insert_attachment', 10, 2);

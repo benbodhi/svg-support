@@ -3,14 +3,13 @@ Contributors: Benbodhi
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z9R7JERS82EQQ
 Tags: svg, vector, safe svg, sanitization, mime type
 Requires at least: 5.8
-Tested up to: 6.7.2
+Tested up to: 6.7.3
 Requires PHP: 7.4
 Stable tag: 2.5.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Securely upload SVG files to your media library, with built-in sanitization and advanced features for styling and animation.
-
 
 == Description ==
 
@@ -151,6 +150,10 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Changelog ==
+
+= 2.5.11 =
+* **Security Enhancement**
+    - Added more effective handling of sanitization for REST API uploads
 
 = 2.5.10 =
 * **Fixes**:
@@ -462,6 +465,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+
+= 2.5.11 =
+Security update: added more effective handling of sanitization for REST API uploads
 
 = 2.5.10 =
 Fixed issue with upload checks preventing plugin uploads
