@@ -460,6 +460,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 == Upgrade Notice ==
 = 2.5.9 =
 Important security update that adds enhanced upload validation, MIME type checking, and CSRF protection. Please backup before updating. No configuration changes required - all security improvements work automatically.
+
 = 2.5.8 =
 Improved security, enhanced SVG processing, and updated admin interface. Includes better sanitization and escaping practices. Please take a backup before updating!
 
