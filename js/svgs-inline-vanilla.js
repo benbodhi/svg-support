@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 bodhisvgsReplacements++;
 
             } else if (xmlHttp.readyState === 4 && xmlHttp.status !== 200) {
-                console.error('Failed to load SVG:', imgURL);
+                // Silently fail
             }
         };
 

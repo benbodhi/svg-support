@@ -158,24 +158,17 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
     - Added proper multisite support for SVG uploads across subsites
     - Added network administrator support for SVG uploads on all subsites
 
-* **Fixes**:
-    - PHP Warning about undefined array key "css_target" in admin init.php
-    - Fixed "not allowed to upload this file type" error on multisite installations
-    - Fixed duplicate meta entries for inline featured images preventing post saves
-    - Added automatic cleanup of duplicate meta entries during plugin update
-    - Improved handling of featured image meta to prevent duplicate entries
-    - Updated and refactored Gutenberg featured image checkbox to use modern React hooks instead of deprecated withState
-    - Fixed missing file path in SVG attachment metadata causing issues with WPML Media Translation
-    - Fixed jQuery dependency only being required when not using vanilla JS option
-
 * **Security Enhancements**:
+    - Updated DOMPurify library to version 2.5.8
+    - Updated enshrined/svg-sanitize to version 0.21.0
     - Added nonce verification for non-REST uploads to prevent CSRF attacks
     - Improved MIME type validation for SVG files
     - Enhanced file content validation to ensure only valid SVG files are processed
     - Moved security checks earlier in the upload process for better efficiency
-    - Updated DOMPurify library to version 2.5.0 to address CVE-2024-47875
+    - Updated and improved sanitization options for both frontend and admin
 
 * **Code Improvements**:
+    - Removed console logging statements from JavaScript files for cleaner browser console
     - Reorganized upload validation flow for better performance
     - Added proper error messages for failed security checks
     - Improved handling of REST API uploads
@@ -186,10 +179,19 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
     - Added AJAX hooks for featured image inline toggle
     - Enqueue minified Gutenberg filters script instead of expanded version
 
+* **Fixes**:
+    - PHP Warning about undefined array key "css_target" in admin init.php
+    - Fixed "not allowed to upload this file type" error on multisite installations
+    - Fixed duplicate meta entries for inline featured images preventing post saves
+    - Added automatic cleanup of duplicate meta entries during plugin update
+    - Improved handling of featured image meta to prevent duplicate entries
+    - Updated and refactored Gutenberg featured image checkbox to use modern React hooks instead of deprecated withState
+    - Fixed missing file path in SVG attachment metadata causing issues with WPML Media Translation
+    - Fixed jQuery dependency only being required when not using vanilla JS option
+
 * **General Updates**:
     - Updated security documentation
     - Refined error messaging for better user experience
-    - Removed some unnecessary console logging
 
 = 2.5.8 =
 * **Security Enhancements**:

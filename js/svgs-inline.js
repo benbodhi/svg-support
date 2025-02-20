@@ -76,7 +76,7 @@ jQuery(document).ready(function ($) {
             $(document).trigger('svg.loaded', [imgID]);
 
         }, 'xml').fail(function() {
-            console.error('Failed to load SVG:', imgURL);
+            // Silently fail
         });
 
     }
