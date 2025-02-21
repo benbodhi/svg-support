@@ -1,0 +1,28 @@
+{
+    "landingPage": "/wp-admin/options-general.php?page=svg-support",
+    "preferredVersions": {
+        "php": "8.1",
+        "wp": "latest"
+    },
+    "steps": [
+        {
+            "step": "login",
+            "username": "admin",
+            "password": "password"
+        },
+        {
+            "step": "installPlugin",
+            "pluginZipFile": {
+                "resource": "wordpress.org/plugins",
+                "slug": "svg-support"
+            }
+        },
+        {
+            "step": "activatePlugin",
+            "pluginSlug": "svg-support"
+        }
+    ],
+    "features": {
+        "networking": true
+    }
+} 

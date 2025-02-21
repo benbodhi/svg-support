@@ -62,6 +62,14 @@
       "oAP" : "\/admin\/svgs-settings-page.php",
       "oF" : 0
     },
+    "\/blueprint.json" : {
+      "ft" : 524288,
+      "oA" : 1,
+      "oAP" : "\/blueprint-min.json",
+      "oF" : 0,
+      "oO" : 0,
+      "oS" : 1
+    },
     "\/composer.json" : {
       "ft" : 524288,
       "oA" : 1,

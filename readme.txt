@@ -151,6 +151,10 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 == Changelog ==
 
+= 2.5.12 =
+* **General Updates**:
+    - Added blueprint.json for the live preview feature on wordpress.org
+
 = 2.5.11 =
 * **Security Enhancement**
     - Added more effective handling of sanitization for REST API uploads
