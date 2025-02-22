@@ -155,6 +155,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 * **Security Enhancements**:
     - Remove default roles from the sanitizer bypass settings
 
+* **General Updates**:
+    - Restructured settings layout
+
 = 2.5.13 =
 * **Code Improvements**:
     - Better PHP 8.3 compatibility - added null checks to prevent deprecated warnings in PHP 8.3
