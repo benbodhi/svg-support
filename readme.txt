@@ -151,6 +151,10 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 == Changelog ==
 
+= 2.5.14 =
+* **Security Enhancements**:
+    - Remove default roles from the sanitizer bypass settings
+
 = 2.5.13 =
 * **Code Improvements**:
     - Better PHP 8.3 compatibility - added null checks to prevent deprecated warnings in PHP 8.3
@@ -476,6 +480,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+
+= 2.5.14 =
+
 
 = 2.5.13 =
 Better PHP 8.3 compatibility (added null checks to prevent deprecated warnings in PHP 8.3)
