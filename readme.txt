@@ -5,7 +5,7 @@ Tags: svg, vector, safe svg, sanitization, mime type
 Requires at least: 5.8
 Tested up to: 6.7.3
 Requires PHP: 7.4
-Stable tag: 2.5.12
+Stable tag: 2.5.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -150,6 +150,10 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Changelog ==
+
+= 2.5.13 =
+* **Code Improvements**:
+    - Better PHP 8.3 compatibility - added null checks to prevent deprecated warnings in PHP 8.3
 
 = 2.5.12 =
 * **General Updates**:
@@ -472,6 +476,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+
+= 2.5.13 =
+Better PHP 8.3 compatibility (added null checks to prevent deprecated warnings in PHP 8.3)
 
 = 2.5.12 =
 Fixes mime type check that was restricting SVG uploads without the XML tag in PHP 7.4

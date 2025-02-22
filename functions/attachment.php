@@ -120,7 +120,7 @@ function bodhi_svgs_generate_svg_attachment_metadata( $metadata, $attachment_id 
 		$svg_path = get_attached_file( $attachment_id );
 		$upload_dir = wp_upload_dir();
 		// Get the path relative to /uploads/
-		$relative_path = str_replace($upload_dir['basedir'], '', $svg_path);
+		$relative_path = $svg_path ? str_replace($upload_dir['basedir'], '', $svg_path) : '';
 		$filename = basename( $svg_path );
 
 		$dimensions = bodhi_svgs_get_dimensions( $svg_path );
@@ -286,13 +286,15 @@ function bodhi_svgs_minify() {
  * @return bool True if the contents are gzipped, false otherwise.
  */
 function bodhi_svgs_is_gzipped( $contents ) {
+	if ($contents === null) {
+		return false;
+	}
 
 	if ( function_exists( 'mb_strpos' ) ) {
 		return 0 === mb_strpos( $contents, "\x1f" . "\x8b" . "\x08" );
 	} else {
 		return 0 === strpos( $contents, "\x1f" . "\x8b" . "\x08" );
 	}
-
 }
 
 /**

@@ -16,8 +16,9 @@ function bodhi_svgs_featured_image_meta( $content ) {
 
 	global $post;
 
+	$thumbnail = get_the_post_thumbnail();
 	// Check if featured image is set and has extension of .svg or .svgz.
-	if ( strpos( get_the_post_thumbnail(), '.svg' ) ) {
+	if ( $thumbnail && strpos( $thumbnail, '.svg' ) !== false ) {
 
 		$text 	= __( 'Render this SVG inline (advanced)', 'svg-support' );
 		$id 	= 'inline_featured_image';
