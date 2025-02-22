@@ -334,7 +334,7 @@ function bodhi_svgs_sanitize_svg($file) {
 		}
 
 		// If neither MIME type nor content validation passes
-		if ($real_mime !== 'image/svg+xml' || !$is_svg_content) {
+		if (($real_mime !== 'image/svg+xml' && $real_mime !== 'image/svg') || !$is_svg_content) {
 			$file['error'] = __('File is not a valid SVG.', 'svg-support');
 			return $file;
 		}

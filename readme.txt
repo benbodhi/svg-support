@@ -5,7 +5,7 @@ Tags: svg, vector, safe svg, sanitization, mime type
 Requires at least: 5.8
 Tested up to: 6.7.3
 Requires PHP: 7.4
-Stable tag: 2.5.10
+Stable tag: 2.5.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -154,6 +154,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 = 2.5.12 =
 * **General Updates**:
     - Added blueprint.json for the live preview feature on wordpress.org
+
+* **Fixes**:
+    - Fixed mime type check that was restricting SVG uploads without the XML tag in PHP 7.4
 
 = 2.5.11 =
 * **Security Enhancement**
@@ -469,6 +472,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+
+= 2.5.12 =
+Fixes mime type check that was restricting SVG uploads without the XML tag in PHP 7.4
 
 = 2.5.11 =
 Security update: added more effective handling of sanitization for REST API uploads
