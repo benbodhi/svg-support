@@ -24,6 +24,3 @@
 
 # Other ignores
 composer.lock
-/vendor.backup/
-plugin-update-testing.md
-/featured-image-files/*
