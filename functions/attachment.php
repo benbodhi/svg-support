@@ -326,17 +326,30 @@ function bodhi_svgs_sanitize_svg($file) {
 
 		// 2. Read first bytes of the file to check for SVG header
 		$file_content = file_get_contents($file_path);
-		$is_svg_content = false;
-		if ($file_content) {
-			// Check for XML declaration and SVG tag
-			$is_svg_content = (
-				preg_match('/^\s*(?:<\?xml[^>]*>\s*)?(?:<!DOCTYPE[^>]*>\s*)?<svg[^>]*>/i', $file_content) &&
-				strpos($file_content, '</svg>') !== false
-			);
-		}
+		
+		// Check for XML declaration and SVG tag
+		$pattern1 = '/^[\s\n]*(?:<\?xml[^>]*>[\s\n]*)?(?:<!--.*?-->[\s\n]*)*(?:<!DOCTYPE[^>]*>[\s\n]*)?(?:<!--.*?-->[\s\n]*)*<svg[^>]*>/is';
+		$pattern2 = '/^[\s\n]*(?:<!--.*?-->[\s\n]*)*<svg[^>]*>/is';
 
-		// If neither MIME type nor content validation passes
-		if (($real_mime !== 'image/svg+xml' && $real_mime !== 'image/svg') || !$is_svg_content) {
+		$match1 = preg_match($pattern1, $file_content);
+		$match2 = preg_match($pattern2, $file_content);
+		$has_closing = strpos($file_content, '</svg>') !== false;
+
+		error_log('SVG Content (first 200 chars): ' . substr($file_content, 0, 200));
+		error_log('Pattern 1 match: ' . ($match1 ? 'true' : 'false'));
+		error_log('Pattern 2 match: ' . ($match2 ? 'true' : 'false'));
+		error_log('Has closing tag: ' . ($has_closing ? 'true' : 'false'));
+
+		$is_svg_content = ($match1 || $match2) && $has_closing;
+
+		error_log('Real MIME type: ' . $real_mime);
+
+		// If content validation fails OR (mime type isn't SVG AND isn't a plain text file containing SVG)
+		if (!$is_svg_content || 
+			($real_mime !== 'image/svg+xml' && 
+			 $real_mime !== 'image/svg' && 
+			 !($real_mime === 'text/plain' && $is_svg_content))) {
+			error_log('SVG validation failed - MIME: ' . $real_mime . ', Content valid: ' . ($is_svg_content ? 'true' : 'false'));
 			$file['error'] = __('File is not a valid SVG.', 'svg-support');
 			return $file;
 		}
