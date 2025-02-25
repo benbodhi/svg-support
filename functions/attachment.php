@@ -510,53 +510,6 @@ function bodhi_svgs_rest_pre_upload($file, $request) {
 }
 add_filter('rest_pre_upload_file', 'bodhi_svgs_rest_pre_upload', 10, 2);
 
-/**
- * Clean up duplicate inline_featured_image meta entries
- * 
- * This is a one-time migration function that runs only when upgrading to version 2.5.9
- * to fix duplicate meta entries caused by older plugin versions. The slow meta query
- * is intentional and necessary for this cleanup operation.
- *
- * @since 2.5.9
- * @see svg-support.php Version upgrade handling
- * @return void
- */
-function bodhi_svgs_cleanup_duplicate_meta() {
-    // Use WP_Query with optimized parameters and batching
-    $batch_size = 100;
-    $offset = 0;
-    
-    do {
-        $query = new WP_Query(array(
-            'post_type'      => 'any',
-            'posts_per_page' => $batch_size,
-            'offset'         => $offset,
-            'meta_query'     => array(
-                array(
-                    'key'     => 'inline_featured_image',
-                    'compare' => 'EXISTS'
-                )
-            ),
-            'no_found_rows'  => true,
-            'fields'         => 'ids'
-        ));
-
-        if ($query->have_posts()) {
-            foreach ($query->posts as $post_id) {
-                $meta_values = get_post_meta($post_id, 'inline_featured_image');
-                
-                if (count($meta_values) > 1) {
-                    $keep_value = end($meta_values);
-                    delete_post_meta($post_id, 'inline_featured_image');
-                    add_post_meta($post_id, 'inline_featured_image', $keep_value);
-                }
-            }
-        }
-
-        $offset += $batch_size;
-    } while (count($query->posts) === $batch_size);
-}
-
 function bodhi_svgs_handle_upload_check($fileinfo) {
     if ($fileinfo['type'] === 'image/svg+xml') {
         global $bodhi_last_upload_info;

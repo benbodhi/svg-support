@@ -305,6 +305,25 @@
 
 								</table>
 
+								<div class="postbox">
+									<h3><span><?php esc_html_e( 'Danger Zone', 'svg-support' ); ?></span></h3>
+									<div class="inside">
+										<table class="form-table">
+											<tr valign="top">
+												<th scope="row">
+													<label for="bodhi_svgs_settings[del_plugin_data]"><strong><?php esc_html_e( 'Delete Plugin Data', 'svg-support' ); ?></strong></label>
+												</th>
+												<td>
+													<label for="bodhi_svgs_settings[del_plugin_data]">
+														<input id="bodhi_svgs_settings[del_plugin_data]" name="bodhi_svgs_settings[del_plugin_data]" type="checkbox" <?php checked( isset( $bodhi_svgs_options['del_plugin_data'] ), true ); ?> />
+														<?php esc_html_e( 'Yes', 'svg-support' ); ?><br /><small class="description"><?php esc_html_e('Delete all plugin\'s data during uninstallation process.', 'svg-support' ); ?></small>
+													</label>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+
 								<p>
 									<input class="button-primary" type="submit" name="bodhi_svgs_settings_submit" value="<?php esc_html_e( 'Save Changes', 'svg-support' ); ?>" />
 								</p>
@@ -314,31 +333,6 @@
 						</div> <!-- .inside -->
 
 					</div> <!-- .postbox -->
-
-					<div class="postbox">
-						<h3><span><?php esc_html_e( 'Danger Zone', 'svg-support' ); ?></span></h3>
-						<div class="inside">
-							<form name="bodhi_svgs_settings_form" method="post" action="options.php">
-								<?php settings_fields('bodhi_svgs_settings_group'); ?>
-								<table class="form-table">
-									<tr valign="top">
-										<th scope="row">
-											<label for="bodhi_svgs_settings[del_plugin_data]"><strong><?php esc_html_e( 'Delete Plugin\'s Data', 'svg-support' ); ?></strong></label>
-										</th>
-										<td>
-											<label for="bodhi_svgs_settings[del_plugin_data]">
-												<input id="bodhi_svgs_settings[del_plugin_data]" name="bodhi_svgs_settings[del_plugin_data]" type="checkbox" <?php checked( isset( $bodhi_svgs_options['del_plugin_data'] ), true ); ?> />
-												<?php esc_html_e( 'Yes', 'svg-support' ); ?><br /><small class="description"><?php esc_html_e('Delete all plugin\'s data during uninstallation process.', 'svg-support' ); ?></small>
-											</label>
-										</td>
-									</tr>
-								</table>
-								<p>
-									<input class="button-primary" type="submit" name="bodhi_svgs_settings_submit" value="<?php esc_html_e( 'Save Changes', 'svg-support' ); ?>" />
-								</p>
-							</form>
-						</div>
-					</div>
 
 					<div class="postbox">
 

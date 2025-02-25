@@ -63,6 +63,7 @@ include( BODHI_SVGS_PLUGIN_PATH . 'functions/enqueue.php' );				// enqueue js & 
 include( BODHI_SVGS_PLUGIN_PATH . 'functions/localization.php' );			// setup localization & languages
 include( BODHI_SVGS_PLUGIN_PATH . 'functions/attribute-control.php' );		// auto set SVG class & remove dimensions during insertion
 include( BODHI_SVGS_PLUGIN_PATH . 'functions/featured-image.php' );			// allow inline SVG for featured images
+include( BODHI_SVGS_PLUGIN_PATH . 'functions/meta-cleanup.php' );			// cleanup duplicate meta entries
 
 // Include WP All Import integration only if WP All Import is active
 // if ( defined( 'PMXI_VERSION' ) ) {
@@ -81,11 +82,8 @@ include( BODHI_SVGS_PLUGIN_PATH . 'functions/featured-image.php' );			// allow i
  * - Legacy versions (null, empty, invalid)
  */
 function bodhi_svgs_version_updates() {
-    // Get stored version, defaulting to '0.0.0' if none exists
-    // This handles null, empty string, boolean false, and invalid version strings
     $stored_version = get_option('bodhi_svgs_plugin_version', '0.0.0');
     
-    // Ensure we have a valid version string
     if (!is_string($stored_version) || empty($stored_version)) {
         $stored_version = '0.0.0';
     }
@@ -95,18 +93,17 @@ function bodhi_svgs_version_updates() {
         return;
     }
     
-    // Run version-specific updates
-    // This will run for all versions before 2.5.9, including:
-    // - All 0.x versions
-    // - All 1.x versions
-    // - All 2.x versions up to 2.5.8
-    // - Fresh installs and invalid versions ('0.0.0')
-    if (version_compare($stored_version, '2.5.9', '<')) {
+    // Store the old version for comparison
+    $old_version = $stored_version;
+    
+    // Update to current version
+    update_option('bodhi_svgs_plugin_version', BODHI_SVGS_VERSION);
+    
+    // If coming from before 2.5.14, run cleanup
+    if (version_compare($old_version, '2.5.14', '<')) {
+        require_once BODHI_SVGS_PLUGIN_PATH . 'functions/meta-cleanup.php';
         bodhi_svgs_cleanup_duplicate_meta();
     }
-    
-    // Update version in database
-    update_option('bodhi_svgs_plugin_version', BODHI_SVGS_VERSION);
 }
 add_action('admin_init', 'bodhi_svgs_version_updates');
 

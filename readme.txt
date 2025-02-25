@@ -155,8 +155,14 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 * **Security Enhancements**:
     - Remove default roles from the sanitizer bypass settings
 
+* **Performance Improvements**:
+    - Cleanup duplicate inline_featured_image meta entries more efficiently
+    - Remove inline_featured_image meta entries that aren't explicitly set to 1 (enabled)
+    - Don't store inline_featured_image meta for posts that previously had it enabled but don't anymore
+
 * **General Updates**:
     - Restructured settings layout
+    - Better cleanup on uninstall when delete plugin data is selected
 
 = 2.5.13 =
 * **Code Improvements**:
