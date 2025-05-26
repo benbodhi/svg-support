@@ -65,8 +65,9 @@ function bodhi_svgs_get_dimensions( $svg ) {
 
 	// Check if $svg is a URL or a local file path
 	if ( filter_var( $svg, FILTER_VALIDATE_URL ) ) {
+		$svg_url = apply_filters( 'bodhi_svgs_remote_svg_url', $svg );
 		// For remote SVGs, use wp_remote_get()
-		$response = wp_remote_get( $svg );
+		$response = wp_remote_get( $svg_url );
 		if ( is_wp_error( $response ) ) {
 			return (object) array( 'width' => 0, 'height' => 0 );
 		}
