@@ -25,6 +25,9 @@
 # GitHub-only readme (WordPress.org uses readme.txt)
 /README.md
 
+# GitHub-only license file (WordPress.org reads the License headers in readme.txt)
+/LICENSE
+
 # Build tooling & dev sources (available on GitHub for contributors)
 /composer.json
 /composer.lock
