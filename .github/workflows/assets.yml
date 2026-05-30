@@ -4,12 +4,12 @@ name: Update WordPress.org assets
 # to the SVN /assets/ folder. This ONLY touches the WordPress.org store
 # listing — it never deploys plugin code to trunk or creates a release.
 #
-# Runs automatically when you push asset changes to main, and can also be
+# Runs automatically when you push asset changes to master, and can also be
 # triggered manually from the Actions tab.
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - '.wordpress-org/**'
   workflow_dispatch:
