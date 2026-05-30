@@ -29,7 +29,13 @@
         "post-update-cmd": [
             "mkdir -p vendor/DOMPurify",
             "grep -v 'sourceMappingURL=purify.min.js.map' vendor/cure53/dompurify/dist/purify.min.js > vendor/DOMPurify/DOMPurify.min.js"
-        ]
+        ],
+        "check": "bin/plugin-check.sh",
+        "check:errors": "bin/plugin-check.sh --ignore-warnings"
+    },
+    "scripts-descriptions": {
+        "check": "Run the WordPress.org Plugin Check against this plugin in your LocalWP site.",
+        "check:errors": "Same as check, but report blocking errors only (skip warnings)."
     },
     "config": {
         "optimize-autoloader": true,

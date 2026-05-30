@@ -29,6 +29,7 @@
 /LICENSE
 
 # Build tooling & dev sources (available on GitHub for contributors)
+/bin
 /composer.json
 /composer.lock
 /config.codekit3

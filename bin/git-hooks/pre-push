@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#
+# Pre-push gate: run the WordPress.org "Plugin Check" against the plugin in your
+# LocalWP test site before pushing to the remote.
+#
+#   - ERRORs block the push (these fail WordPress.org review).
+#   - WARNINGs are shown but do NOT block.
+#   - If the LocalWP site isn't running, the check is skipped (never blocks).
+#
+# Note: stable_tag_mismatch is intentionally ignored. This repo's readme.txt
+# Stable Tag always lags the plugin header during development — the deploy
+# workflow (.github/workflows/deploy.yml) sets the correct Stable Tag when it
+# publishes to WordPress.org, so a mismatch here is the normal, expected state.
+#
+# Install:  bin/git-hooks/install.sh
+# Bypass once:  git push --no-verify
+#
+set -uo pipefail
+
+# Drain the ref list git feeds us on stdin so it isn't left dangling.
+cat >/dev/null 2>&1 || true
+
+repo_root="$(git rev-parse --show-toplevel)"
+checker="$repo_root/bin/plugin-check.sh"
+
+[[ -x "$checker" ]] || exit 0   # tooling missing → don't block pushes
+
+report="$("$checker" --ignore-codes=stable_tag_mismatch 2>&1)"
+rc=$?
+
+if [[ $rc -eq 2 ]]; then
+  echo "ℹ️  Plugin Check skipped — LocalWP site isn't running."
+  exit 0
+fi
+
+echo "$report"
+
+if printf '%s\n' "$report" | grep -q $'\tERROR\t'; then
+  echo
+  echo "✖ Plugin Check found ERRORs (above). Push blocked."
+  echo "  Fix them, or bypass once with:  git push --no-verify"
+  exit 1
+fi
+
+echo "✓ Plugin Check passed (no blocking errors)."
+exit 0

@@ -1,0 +1,51 @@
+name: Plugin Check
+
+# Runs the official WordPress.org Plugin Check on GitHub's runners, so the
+# plugin is validated on every push / pull request regardless of whether your
+# local LocalWP site is running. The local pre-push hook is the fast first
+# line of defence; this is the authoritative, machine-independent gate.
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  plugin-check:
+    name: WordPress Plugin Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Run Plugin Check
+        uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: './'
+          slug: svg-support
+          # Mirror .distignore — only check files that actually ship.
+          exclude-directories: |
+            .git
+            .github
+            .wordpress-org
+            scss
+            node_modules
+            bin
+          exclude-files: |
+            .DS_Store
+            .gitignore
+            .gitattributes
+            .distignore
+            README.md
+            LICENSE
+            composer.json
+            composer.lock
+            config.codekit3
+          # The readme Stable Tag intentionally lags the plugin header during
+          # development; deploy.yml sets the correct tag at release time.
+          ignore-codes: |
+            stable_tag_mismatch
