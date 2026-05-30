@@ -4,6 +4,17 @@ name: Plugin Check
 # plugin is validated on every push / pull request regardless of whether your
 # local LocalWP site is running. The local pre-push hook is the fast first
 # line of defence; this is the authoritative, machine-independent gate.
+#
+# NOTE: We deliberately do NOT use wordpress/plugin-check-action here.
+# That action injects Plugin Check as a *URL plugin* in .wp-env.json, which
+# trips a wp-env bug on the current ubuntu-24.04 runner image (Node 24.16 /
+# libuv 1.52.1): `wp-env start` silently exits 0 without starting Docker,
+# producing "Environment not initialized. Run `wp-env start` first."
+# See https://github.com/WordPress/plugin-check-action/issues/579
+#
+# The fix (verified upstream) is to boot wp-env WITHOUT any URL plugins and
+# install Plugin Check via WP-CLI after the environment is up. We also pin
+# Node to 20 and verify the environment actually started, for good measure.
 on:
   push:
     branches:
@@ -22,30 +33,43 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Run Plugin Check
-        uses: wordpress/plugin-check-action@v1
+      - uses: actions/setup-node@v4
         with:
-          build-dir: './'
-          slug: svg-support
-          # Mirror .distignore — only check files that actually ship.
-          exclude-directories: |
-            .git
-            .github
-            .wordpress-org
-            scss
-            node_modules
-            bin
-          exclude-files: |
-            .DS_Store
-            .gitignore
-            .gitattributes
-            .distignore
-            README.md
-            LICENSE
-            composer.json
-            composer.lock
-            config.codekit3
-          # The readme Stable Tag intentionally lags the plugin header during
-          # development; deploy.yml sets the correct tag at release time.
-          ignore-codes: |
-            stable_tag_mismatch
+          node-version: 20
+
+      - name: Configure and install wp-env
+        run: |
+          # Mount this repo as the plugin (slug = repo dir name = svg-support).
+          # No URL plugins here — that's what triggers the wp-env start bug.
+          cat > .wp-env.json <<'JSON'
+          {
+            "core": null,
+            "plugins": [ "." ]
+          }
+          JSON
+          npm -g --no-fund install @wordpress/env
+
+      - name: Start wp-env
+        uses: nick-fields/retry@v4
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          shell: bash
+          # wp-env can exit 0 without actually starting; the `wp cli info`
+          # check turns that silent failure into a real one so retry kicks in.
+          command: |
+            wp-env start --update
+            wp-env run cli wp cli info
+
+      - name: Install Plugin Check (via WP-CLI, not a wp-env URL plugin)
+        run: |
+          wp-env run cli wp plugin install plugin-check --activate
+          wp-env run cli wp plugin activate svg-support
+
+      - name: Run Plugin Check
+        run: |
+          wp-env run cli wp plugin check svg-support \
+            --exclude-directories=.git,.github,.wordpress-org,scss,node_modules,bin \
+            --exclude-files=.DS_Store,.gitignore,.gitattributes,.distignore,README.md,LICENSE,composer.json,composer.lock,config.codekit3,.wp-env.json \
+            --ignore-codes=stable_tag_mismatch \
+            --require=./wp-content/plugins/plugin-check/cli.php
