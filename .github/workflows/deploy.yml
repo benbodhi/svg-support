@@ -1,0 +1,103 @@
+name: Deploy to WordPress.org
+
+# Real deploys happen ONLY when a GitHub Release is published.
+# Normal commits/pushes (including from GitHub Desktop) never trigger this.
+#
+# Safe ways to test the whole pipeline WITHOUT committing to SVN:
+#   - Publish a GitHub *pre-release*  -> runs as a dry run, or
+#   - Run this workflow manually from the Actions tab with "dry_run" enabled.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no SVN commit). Keep enabled to test safely.'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Validation runs first, with NO environment gate, so you always see the
+  # version check pass (or fail) before anything reaches the approval step.
+  verify:
+    name: Verify version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: version
+        name: Read & validate the plugin version
+        run: |
+          HEADER_VERSION="$(grep -iE '^Version:' svg-support.php | head -n1 | sed -E 's/^Version:[[:space:]]*//' | tr -d '[:space:]\r')"
+          echo "Plugin header version: $HEADER_VERSION"
+          echo "version=$HEADER_VERSION" >> "$GITHUB_OUTPUT"
+
+          # Only a full (non-pre) release must exactly match its tag.
+          if [ "${{ github.event_name }}" = "release" ] && [ "${{ github.event.release.prerelease }}" != "true" ]; then
+            TAG="${GITHUB_REF_NAME#v}"
+            echo "Release tag: $TAG"
+            if [ "$TAG" != "$HEADER_VERSION" ]; then
+              echo "::error::Release tag ($TAG) does not match the Version header in svg-support.php ($HEADER_VERSION). Bump the version and re-tag. Nothing was deployed."
+              exit 1
+            fi
+            echo "Tag matches header version — this is a REAL deploy."
+          else
+            echo "Dry-run / pre-release test — exact tag match not required."
+          fi
+
+  deploy:
+    name: Deploy to WordPress.org SVN
+    needs: verify
+    runs-on: ubuntu-latest
+
+    # contents: write lets us attach the installable zip to the GitHub release.
+    permissions:
+      contents: write
+
+    # Required-approval gate: this job pauses and waits for a manual approval
+    # in the Actions tab before running. Configure the "wordpress-org"
+    # environment with a required reviewer for this to take effect.
+    environment: wordpress-org
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set readme Stable tag to the released version
+        run: |
+          VERSION="${{ needs.verify.outputs.version }}"
+          sed -i.bak -E "s/^Stable tag:.*/Stable tag: ${VERSION}/" readme.txt && rm -f readme.txt.bak
+          echo "Stable tag set to ${VERSION} for the deployed trunk."
+          grep -iE '^Stable tag:' readme.txt
+
+      - name: Deploy to WordPress.org
+        id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          # Dry run for manual "dry_run" dispatches and for pre-releases.
+          dry-run: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) || (github.event_name == 'release' && github.event.release.prerelease) }}
+          # Build a zip of the exact files deployed to SVN trunk (the
+          # installable plugin), exposed as steps.deploy.outputs.zip-path.
+          generate-zip: true
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: svg-support
+          # Drive the version explicitly from the plugin header so manual runs
+          # (which aren't tied to a tag) deploy the correct version.
+          VERSION: ${{ needs.verify.outputs.version }}
+
+      # Attach the installable zip to the GitHub release (full releases only).
+      - name: Attach installable zip to the GitHub release
+        if: github.event_name == 'release' && github.event.release.prerelease == false
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          DEST="svg-support-${{ needs.verify.outputs.version }}.zip"
+          cp "${{ steps.deploy.outputs.zip-path }}" "$DEST"
+          gh release upload "${{ github.event.release.tag_name }}" "$DEST" --clobber
+          echo "Attached $DEST to release ${{ github.event.release.tag_name }}."

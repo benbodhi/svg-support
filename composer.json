@@ -24,11 +24,11 @@
     "scripts": {
         "post-install-cmd": [
             "mkdir -p vendor/DOMPurify",
-            "cp vendor/cure53/dompurify/dist/purify.min.js vendor/DOMPurify/DOMPurify.min.js"
+            "grep -v 'sourceMappingURL=purify.min.js.map' vendor/cure53/dompurify/dist/purify.min.js > vendor/DOMPurify/DOMPurify.min.js"
         ],
         "post-update-cmd": [
             "mkdir -p vendor/DOMPurify",
-            "cp vendor/cure53/dompurify/dist/purify.min.js vendor/DOMPurify/DOMPurify.min.js"
+            "grep -v 'sourceMappingURL=purify.min.js.map' vendor/cure53/dompurify/dist/purify.min.js > vendor/DOMPurify/DOMPurify.min.js"
         ]
     },
     "config": {

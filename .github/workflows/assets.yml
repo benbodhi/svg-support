@@ -1,0 +1,30 @@
+name: Update WordPress.org assets
+
+# Syncs the .wordpress-org/ directory (banner, icon, screenshots, blueprint)
+# to the SVN /assets/ folder. This ONLY touches the WordPress.org store
+# listing — it never deploys plugin code to trunk or creates a release.
+#
+# Runs automatically when you push asset changes to main, and can also be
+# triggered manually from the Actions tab.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.wordpress-org/**'
+  workflow_dispatch:
+
+jobs:
+  assets:
+    name: Push assets to WordPress.org
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Update plugin assets
+        uses: 10up/action-wordpress-plugin-asset-update@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: svg-support

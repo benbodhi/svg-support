@@ -5,7 +5,7 @@ Tags: svg, vector, safe svg, sanitization, mime type
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.5.14
+Stable tag: 2.5.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,7 +87,7 @@ I'm open to your [suggestions and feedback](mailto:wp@benbodhi.com) - Thanks for
 
 Follow [@SVGSupport](https://twitter.com/svgsupport) on Twitter
 Follow [@benbodhi](https://twitter.com/benbodhi) on Twitter
-Follow [@benbodhi](https://warpcast.com/benbodhi) on Warpcast
+Follow [@benbodhi](https://farcaster.xyz/benbodhi) on Farcaster
 
 *Note:* I hope you like this plugin! Please take a moment to [rate it](https://wordpress.org/support/view/plugin-reviews/svg-support?filter=5#postform).
 
@@ -150,6 +150,11 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Changelog ==
+
+= 2.5.16 =
+* **General Updates**:
+    - Updated the author social link from Warpcast to Farcaster (farcaster.xyz/benbodhi)
+    - Removed the source map reference from the bundled DOMPurify library to stop browsers requesting a missing .map file (harmless 404 in dev tools)
 
 = 2.5.15 =
 * **Security Enhancements**:
@@ -505,6 +510,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+
+= 2.5.16 =
+Minor maintenance update.
 
 = 2.5.15 =
 Security fix (CVE-2026-48973), SVG uploads fixed for WordPress 6.8+ and 7.0, sideloaded SVGs now sanitized, and updated sanitization libraries.

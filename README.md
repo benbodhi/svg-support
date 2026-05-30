@@ -2,11 +2,11 @@
 
 A powerful WordPress plugin that enables SVG uploads and provides advanced features for working with SVG files in WordPress.
 
-> **⚠️ Development Repository Notice**
-> 
-> This is the latest development version of SVG Support. Code here may be unstable during active development. For production sites, please use the official release from the [WordPress.org plugin repository](https://wordpress.org/plugins/svg-support/).
+> **Development Repository**
 >
-> The official plugin is managed via SVN as per WordPress.org standards. This GitHub repository serves as a development workspace and for issue tracking. Once changes are stable, they will be copied to the SVN repository for release.
+> This GitHub repository is the development workspace for SVG Support and may be ahead of the released version. For production sites, install the official release from the [WordPress.org plugin repository](https://wordpress.org/plugins/svg-support/).
+>
+> Releases are published to WordPress.org via SVN; this repository is used for development and issue tracking.
 
 ## Description
 
@@ -72,7 +72,7 @@ Want to try it out? Spin up a test site instantly:
 
 Contributions are welcome! Feel free to:
 
-- Submit bug reports or feature requests through the [issue tracker](https://github.com/your-username/svg-support/issues)
+- Submit bug reports or feature requests through the [issue tracker](https://github.com/benbodhi/svg-support/issues)
 - Create pull requests for bug fixes or new features
 - Help with translations through [WordPress.org's translation platform](https://translate.wordpress.org/projects/wp-plugins/svg-support)
 
@@ -93,7 +93,7 @@ Created and maintained by [Benbodhi](https://benbodhi.com)
 
 - [@SVGSupport on Twitter](https://twitter.com/svgsupport)
 - [@benbodhi on Twitter](https://twitter.com/benbodhi)
-- [@benbodhi on Warpcast](https://warpcast.com/benbodhi)
+- [@benbodhi on Farcaster](https://farcaster.xyz/benbodhi)
 
 ## Support the Development
 

@@ -1,0 +1,32 @@
+# Files & directories that must NOT ship to the WordPress.org SVN repo.
+#
+# The public GitHub repo is the home for development sources and build
+# tooling, so the SVN/wp.org copy is kept lean — only what the plugin needs
+# to run is shipped.
+#
+# Intentionally KEPT in the release (do NOT add these here):
+#   - css/ and js/ unminified files (the plugin can serve unminified assets)
+#   - svg-support.png (brand file kept in the plugin root)
+#   - the committed vendor/ subset (DOMPurify + svg-sanitize + autoloader)
+
+# Version control & repo metadata
+/.git
+/.github
+/.gitignore
+/.gitattributes
+/.distignore
+
+# WordPress.org store-listing assets (deployed to /assets/, not trunk)
+/.wordpress-org
+
+# macOS noise
+.DS_Store
+
+# GitHub-only readme (WordPress.org uses readme.txt)
+/README.md
+
+# Build tooling & dev sources (available on GitHub for contributors)
+/composer.json
+/composer.lock
+/config.codekit3
+/scss
