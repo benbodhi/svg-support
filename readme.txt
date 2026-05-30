@@ -5,7 +5,7 @@ Tags: svg, vector, safe svg, sanitization, mime type
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.5.15
+Stable tag: 2.5.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -512,7 +512,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 == Upgrade Notice ==
 
 = 2.5.16 =
-Minor maintenance update.
+Recommended security update — includes the 2.5.15 fixes (CVE-2026-48973) and WordPress 6.8+/7.0 upload fixes. 2.5.16 adds minor maintenance.
 
 = 2.5.15 =
 Security fix (CVE-2026-48973), SVG uploads fixed for WordPress 6.8+ and 7.0, sideloaded SVGs now sanitized, and updated sanitization libraries.

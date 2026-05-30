@@ -28,7 +28,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - id: version
         name: Read & validate the plugin version
@@ -65,7 +65,7 @@ jobs:
     environment: wordpress-org
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set readme Stable tag to the released version
         run: |
