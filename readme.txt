@@ -3,7 +3,7 @@ Contributors: Benbodhi
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z9R7JERS82EQQ
 Tags: svg, vector, safe svg, sanitization, mime type
 Requires at least: 5.8
-Tested up to: 6.7.3
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 2.5.14
 License: GPLv2 or later
@@ -150,6 +150,19 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Changelog ==
+
+= 2.5.15 =
+* **Security Enhancements**:
+    - Fixed a broken access control issue in the inline featured image toggle (CVE-2026-48973) - the AJAX action is no longer exposed to logged-out visitors and now checks edit permissions on the specific post
+    - SVGs added programmatically via media_handle_sideload() are now sanitized, just like regular media library uploads
+    - Updated the bundled SVG sanitizer (enshrined/svg-sanitize) to 0.22.0, which patches an XSS bypass in xlink:href handling
+
+* **Fixes**:
+    - SVG uploads work again on WordPress 6.8 and newer - opted out of the new check that was blocking SVGs because the server can't generate responsive image sizes for them
+
+* **General Updates**:
+    - Tested and confirmed working with WordPress 7.0
+    - Updated the bundled DOMPurify library to 2.5.9
 
 = 2.5.14 =
 * **Security Enhancements**:
@@ -492,6 +505,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+
+= 2.5.15 =
+Security fix (CVE-2026-48973), SVG uploads fixed for WordPress 6.8+ and 7.0, sideloaded SVGs now sanitized, and updated sanitization libraries.
 
 = 2.5.14 =
 Better DB handling, better upload checks
