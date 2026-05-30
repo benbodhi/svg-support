@@ -28,3 +28,7 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: svg-support
+          # Only sync assets + readme; never touch (or be blocked by) trunk
+          # code. This lets asset updates run even while code changes for the
+          # next release are sitting unreleased in the repo.
+          IGNORE_OTHER_FILES: true
