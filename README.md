@@ -1,13 +1,14 @@
 # SVG Support
 
-[![Version](https://img.shields.io/wordpress/plugin/v/svg-support?label=version)](https://wordpress.org/plugins/svg-support/)
-[![Requires PHP](https://img.shields.io/wordpress/plugin/required-php/svg-support)](https://wordpress.org/plugins/svg-support/)
-[![Requires WordPress](https://img.shields.io/wordpress/plugin/wp-version/svg-support?label=requires%20WordPress)](https://wordpress.org/plugins/svg-support/)
-[![Tested WordPress](https://img.shields.io/wordpress/plugin/tested/svg-support?label=WordPress%20tested)](https://wordpress.org/plugins/svg-support/)
-[![License](https://img.shields.io/github/license/benbodhi/svg-support)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![Active Installs](https://img.shields.io/wordpress/plugin/installs/svg-support?label=active%20installs)](https://wordpress.org/plugins/svg-support/advanced/)
-[![Rating](https://img.shields.io/wordpress/plugin/stars/svg-support?label=rating)](https://wordpress.org/support/plugin/svg-support/reviews/)
-[![Playground Demo](https://img.shields.io/badge/Playground-Demo-2271b1?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?plugin=svg-support)
+[![Support Level](https://img.shields.io/badge/support-stable-blue.svg)](#support)
+![Required PHP Version](https://img.shields.io/wordpress/plugin/required-php/svg-support?label=Requires%20PHP)
+![Required WP Version](https://img.shields.io/wordpress/plugin/wp-version/svg-support?label=Requires%20WordPress)
+![WordPress tested up to version](https://img.shields.io/wordpress/plugin/tested/svg-support?label=WordPress)
+[![GPLv2 License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![Active Installs](https://img.shields.io/wordpress/plugin/installs/svg-support?label=Active%20Installs)](https://wordpress.org/plugins/svg-support/advanced/)
+[![Rating](https://img.shields.io/wordpress/plugin/stars/svg-support?label=Rating)](https://wordpress.org/support/plugin/svg-support/reviews/)
+[![Playground Demo: Stable](https://img.shields.io/wordpress/plugin/v/svg-support?logo=wordpress&logoColor=FFFFFF&label=Playground%3A%20Stable&labelColor=3858E9&color=3858E9)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/benbodhi/svg-support/master/.wordpress-org/blueprints/blueprint.json)
+[![Playground Demo: Dev](https://img.shields.io/badge/Playground%3A%20Dev-master-d54e21?logo=wordpress&logoColor=FFFFFF&labelColor=23282D)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/benbodhi/svg-support/master/.github/blueprints/blueprint-dev.json)
 
 A powerful WordPress plugin that enables SVG uploads and provides advanced features for working with SVG files in WordPress.
 
