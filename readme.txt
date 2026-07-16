@@ -153,6 +153,8 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 = 2.5.17 =
 * **Security Enhancements**:
+    - Fixed a stored XSS sanitization bypass via the .svgz extension - .svgz uploads are now sanitized just like .svg (decompressing the gzip stream first when present), instead of skipping sanitization. This completes the earlier fixes for CVE-2024-10222 / CVE-2023-6708. Thanks to Shivamani Vastrala for the report, and to Erwan Le Rousseau (WPScan, Automattic) for the coordinated disclosure
+    - Browser uploads now run through the same sanitizer configuration as REST and import uploads (custom tag/attribute allow-lists and remote reference removal), keeping all upload paths consistent
     - Added direct file access protection to the settings page so it can no longer be loaded outside of WordPress
 
 = 2.5.16 =
@@ -516,7 +518,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 == Upgrade Notice ==
 
 = 2.5.17 =
-Maintenance and security improvements.
+Recommended security update — fixes a stored XSS sanitization bypass via the .svgz extension (completes the fixes for CVE-2024-10222 / CVE-2023-6708), plus settings page hardening and maintenance.
 
 = 2.5.16 =
 Recommended security update — includes the 2.5.15 fixes (CVE-2026-48973) and WordPress 6.8+/7.0 upload fixes. 2.5.16 adds minor maintenance.
