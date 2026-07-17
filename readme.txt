@@ -136,8 +136,8 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 == Screenshots ==
 
-1. Basic Settings
-2. Advanced Settings
+1. Settings screen
+2. Advanced Mode settings
 3. Featured Image checkbox to render SVG inline
 4. SVG used in WP native Image Widget
 5. Inline SVG in the front end markup
