@@ -63,7 +63,6 @@
 	font-size: 14px;
 	line-height: 1.55;
 	color: var(--svgs-gray-600);
-	max-width: 1180px;
 }
 
 .svgs-ds h1,
@@ -122,18 +121,13 @@
 	line-height: 1;
 }
 
-.svgs-badge {
-	display: inline-flex;
-	align-items: center;
-	height: 22px;
-	padding: 3px 10px;
-	border-radius: 999px;
-	background: var(--svgs-gray-100);
-	color: var(--svgs-gray-600);
+.svgs-ds .svgs-header .svgs-version {
 	font-family: var(--svgs-font-mono);
-	font-size: 11.5px;
-	font-weight: 600;
-	box-sizing: border-box;
+	font-size: 11px;
+	font-weight: 500;
+	letter-spacing: 0;
+	color: var(--svgs-gray-400);
+	margin-left: 5px;
 }
 
 .svgs-savestate {
@@ -242,6 +236,7 @@
 	color: var(--svgs-gray-500);
 	margin: 6px 0 0;
 	line-height: 1.5;
+	max-width: 72ch;
 }
 
 .svgs-subhead {
@@ -314,6 +309,7 @@
 	color: var(--svgs-gray-500);
 	margin-top: 2px;
 	line-height: 1.5;
+	max-width: 72ch;
 }
 
 /* ---------- Role chips ---------- */
@@ -577,51 +573,56 @@ body.svgs-js .svgs-save-row { display: none; }
 .svgs-card-ink p { color: var(--svgs-gray-300); }
 
 .svgs-crypto {
+	margin: 20px 0 0;
+	padding-top: 16px;
+	border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.svgs-crypto-item { margin-bottom: 12px; }
+.svgs-crypto-item:last-child { margin-bottom: 0; }
+
+.svgs-crypto strong {
+	display: block;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.07em;
+	color: var(--svgs-gray-300);
+	margin-bottom: 3px;
+}
+
+.svgs-crypto span {
+	display: block;
 	font-family: var(--svgs-font-mono);
 	font-size: 10.5px;
 	color: var(--svgs-gray-400);
 	word-break: break-all;
-	margin: 12px 0 0;
-	line-height: 1.7;
+	line-height: 1.5;
 }
 
-.svgs-crypto strong { color: var(--svgs-gray-300); font-weight: 600; }
-
-/* Stars */
-.svgs-stars { display: flex; gap: 3px; color: var(--svgs-amber); margin-bottom: 10px; }
-.svgs-stars .svgs-icon { fill: currentColor; }
-
-/* Feature checklist */
-.svgs-feature-list { list-style: none; margin: 0; padding: 0; }
-
-.svgs-feature-list li {
+/* Stacked card buttons */
+.svgs-btn-stack {
 	display: flex;
-	align-items: center;
-	gap: 9px;
-	font-size: 13.5px;
-	color: var(--svgs-gray-600);
-	padding: 5px 0;
+	flex-direction: column;
+	gap: 8px;
 }
 
-.svgs-feature-list .svgs-icon { color: var(--svgs-green); }
+/* Mini stars inside the review button */
+.svgs-btn-stars {
+	display: inline-flex;
+	gap: 2px;
+	color: var(--svgs-amber);
+}
+
+.svgs-btn-stars .svgs-icon { fill: currentColor; }
+
+/* Small link lines at the bottom of a card */
+.svgs-ds .svgs-card .svgs-card-links {
+	margin: 14px 0 0;
+	font-size: 12.5px;
+	color: var(--svgs-gray-400);
+	line-height: 1.9;
+}
 
 /* ShortPixel logo */
 .svgs-card .svgs-partner-logo { display: block; margin-bottom: 12px; }
 .svgs-card .svgs-partner-logo img { max-width: 160px; height: auto; }
-
-/* Tool links */
-.svgs-tool-link {
-	display: flex;
-	align-items: flex-start;
-	gap: 9px;
-	padding: 6px 0;
-	font-size: 13.5px;
-}
-
-.svgs-tool-link .svgs-icon { color: var(--svgs-citron-600); margin-top: 2px; }
-
-.svgs-tool-link span { color: var(--svgs-gray-500); }
-
-/* About card */
-.svgs-about-links { font-size: 13px; color: var(--svgs-gray-500); }
-.svgs-about-links p { margin: 0 0 8px; }

@@ -22,7 +22,9 @@
 	function syncAdvanced() {
 		var on = advancedToggle && advancedToggle.checked;
 		advancedSections.forEach(function (el) {
-			el.style.display = on ? '' : 'none';
+			// Explicit value: an empty string would let the simple-mode
+			// stylesheet (loaded while Advanced Mode is saved off) re-hide it.
+			el.style.display = on ? 'block' : 'none';
 		});
 		lockedNotices.forEach(function (el) {
 			el.style.display = on ? 'none' : 'flex';

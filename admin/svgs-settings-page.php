@@ -76,8 +76,7 @@ $bodhi_svgs_bypass_roles   = isset( $bodhi_svgs_options['sanitize_on_upload_role
 
 	<div class="svgs-header">
 		<img src="<?php echo esc_url( plugins_url( 'admin/img/logo.svg', BODHI_SVGS_PLUGIN_FILE ) ); ?>" width="30" height="30" alt="" />
-		<h1><?php esc_html_e( 'SVG Support', 'svg-support' ); ?></h1>
-		<span class="svgs-badge">v<?php echo esc_html( BODHI_SVGS_VERSION ); ?></span>
+		<h1><?php esc_html_e( 'SVG Support', 'svg-support' ); ?> <span class="svgs-version">v<?php echo esc_html( BODHI_SVGS_VERSION ); ?></span></h1>
 		<span class="svgs-savestate" id="svgs-savestate" data-state="idle">
 			<?php bodhi_svgs_icon( 'cloud', 16 ); ?>
 			<span><?php esc_html_e( 'All changes saved', 'svg-support' ); ?></span>
@@ -285,43 +284,44 @@ $bodhi_svgs_bypass_roles   = isset( $bodhi_svgs_options['sanitize_on_upload_role
 					<?php bodhi_svgs_icon( 'heart', 15 ); ?>
 					<?php esc_html_e( 'Donate via PayPal', 'svg-support' ); ?>
 				</a>
-				<p class="svgs-crypto">
-					<strong>BTC</strong> 1qF8r2HkTLifND7WLGfWmvxfXc9ze55DZ<br />
-					<strong>ETH</strong> 0x599695Eb51aFe2e5a0DAD60aD9c89Bc8f10B54f4
+				<div class="svgs-crypto">
+					<div class="svgs-crypto-item">
+						<strong>BTC</strong>
+						<span>1qF8r2HkTLifND7WLGfWmvxfXc9ze55DZ</span>
+					</div>
+					<div class="svgs-crypto-item">
+						<strong>ETH</strong>
+						<span>0x599695Eb51aFe2e5a0DAD60aD9c89Bc8f10B54f4</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="svgs-card">
+				<h3><?php bodhi_svgs_icon( 'sparkles', 16 ); ?><?php esc_html_e( 'Tutorials & tools', 'svg-support' ); ?></h3>
+				<p><?php esc_html_e( 'Guides for inline rendering, styling and animating SVGs — plus handy tools for animating and optimizing your files — all on the new site.', 'svg-support' ); ?></p>
+				<a class="svgs-btn svgs-btn-secondary svgs-btn-sm svgs-btn-block" target="_blank" href="https://svg.support/tutorials/">
+					<?php esc_html_e( 'Visit svg.support', 'svg-support' ); ?>
+					<?php bodhi_svgs_icon( 'arrow-up-right', 14 ); ?>
+				</a>
+				<p class="svgs-card-links">
+					<a target="_blank" href="https://wordpress.org/plugins/svg-support/"><?php esc_html_e( 'WordPress.org', 'svg-support' ); ?></a> · <a target="_blank" href="https://github.com/benbodhi/svg-support"><?php esc_html_e( 'GitHub', 'svg-support' ); ?></a> · <a target="_blank" href="https://twitter.com/svgsupport">@SVGSupport</a><br />
+					&copy; <a target="_blank" href="https://benbodhi.com/">Benbodhi</a> · <a target="_blank" href="https://twitter.com/benbodhi">@benbodhi</a> · <a target="_blank" href="https://farcaster.xyz/benbodhi">Farcaster</a>
 				</p>
 			</div>
 
 			<div class="svgs-card">
-				<h3><?php bodhi_svgs_icon( 'star', 16 ); ?><?php esc_html_e( 'Ratings & reviews', 'svg-support' ); ?></h3>
-				<div class="svgs-stars">
-					<?php foreach ( range( 1, 5 ) as $bodhi_svgs_star ) { bodhi_svgs_icon( 'star-filled', 18 ); } ?>
+				<h3><?php bodhi_svgs_icon( 'life-buoy', 16 ); ?><?php esc_html_e( 'Support & reviews', 'svg-support' ); ?></h3>
+				<p><?php esc_html_e( 'Need a hand? Support is handled personally through the WordPress.org forums. And if you\'re enjoying SVG Support, a quick five-star review means the world.', 'svg-support' ); ?></p>
+				<div class="svgs-btn-stack">
+					<a class="svgs-btn svgs-btn-secondary svgs-btn-sm svgs-btn-block" target="_blank" href="https://wordpress.org/support/plugin/svg-support/">
+						<?php esc_html_e( 'Get support', 'svg-support' ); ?>
+						<?php bodhi_svgs_icon( 'arrow-up-right', 14 ); ?>
+					</a>
+					<a class="svgs-btn svgs-btn-secondary svgs-btn-sm svgs-btn-block" target="_blank" href="https://wordpress.org/support/view/plugin-reviews/svg-support?filter=5#postform">
+						<span class="svgs-btn-stars"><?php foreach ( range( 1, 5 ) as $bodhi_svgs_star ) { bodhi_svgs_icon( 'star-filled', 12 ); } ?></span>
+						<?php esc_html_e( 'Leave a review', 'svg-support' ); ?>
+					</a>
 				</div>
-				<p><?php esc_html_e( 'Enjoying SVG Support? A quick five-star review means the world. A huge thanks in advance!', 'svg-support' ); ?></p>
-				<a class="svgs-btn svgs-btn-secondary svgs-btn-sm svgs-btn-block" target="_blank" href="https://wordpress.org/support/view/plugin-reviews/svg-support?filter=5#postform">
-					<?php esc_html_e( 'Leave a rating', 'svg-support' ); ?>
-					<?php bodhi_svgs_icon( 'external-link', 14 ); ?>
-				</a>
-			</div>
-
-			<div class="svgs-card">
-				<h3><?php esc_html_e( 'Features', 'svg-support' ); ?></h3>
-				<ul class="svgs-feature-list">
-					<li><?php bodhi_svgs_icon( 'check', 16 ); ?><?php esc_html_e( 'Sanitize SVG files on upload', 'svg-support' ); ?></li>
-					<li><?php bodhi_svgs_icon( 'check', 16 ); ?><?php esc_html_e( 'Style SVG elements using CSS', 'svg-support' ); ?></li>
-					<li><?php bodhi_svgs_icon( 'check', 16 ); ?><?php esc_html_e( 'Animate SVG using CSS or JS', 'svg-support' ); ?></li>
-					<li><?php bodhi_svgs_icon( 'check', 16 ); ?><?php esc_html_e( 'Use odd shapes as links', 'svg-support' ); ?></li>
-					<li><?php bodhi_svgs_icon( 'check', 16 ); ?><?php esc_html_e( 'Inline SVG featured image support', 'svg-support' ); ?></li>
-					<li><?php bodhi_svgs_icon( 'check', 16 ); ?><?php esc_html_e( 'Force all SVG files to render inline', 'svg-support' ); ?></li>
-				</ul>
-			</div>
-
-			<div class="svgs-card">
-				<h3><?php bodhi_svgs_icon( 'life-buoy', 16 ); ?><?php esc_html_e( 'Having issues?', 'svg-support' ); ?></h3>
-				<p><?php esc_html_e( 'I\'m always happy to help out! Support is handled personally through the WordPress.org forums.', 'svg-support' ); ?></p>
-				<a class="svgs-btn svgs-btn-secondary svgs-btn-sm svgs-btn-block" target="_blank" href="https://wordpress.org/support/plugin/svg-support/">
-					<?php esc_html_e( 'Get support', 'svg-support' ); ?>
-					<?php bodhi_svgs_icon( 'arrow-up-right', 14 ); ?>
-				</a>
 			</div>
 
 			<div class="svgs-card">
@@ -338,25 +338,6 @@ $bodhi_svgs_bypass_roles   = isset( $bodhi_svgs_options['sanitize_on_upload_role
 					<?php esc_html_e( 'Try ShortPixel for free', 'svg-support' ); ?>
 					<?php bodhi_svgs_icon( 'external-link', 14 ); ?>
 				</a>
-			</div>
-
-			<div class="svgs-card">
-				<h3><?php bodhi_svgs_icon( 'sparkles', 16 ); ?><?php esc_html_e( 'Animate & optimize SVGs', 'svg-support' ); ?></h3>
-				<div class="svgs-tool-link">
-					<?php bodhi_svgs_icon( 'wand-sparkles', 16 ); ?>
-					<div><a href="https://maxwellito.github.io/vivus-instant/" target="_blank">Vivus Instant</a><br /><span><?php esc_html_e( 'Animate SVG strokes in the browser.', 'svg-support' ); ?></span></div>
-				</div>
-				<div class="svgs-tool-link">
-					<?php bodhi_svgs_icon( 'zap', 16 ); ?>
-					<div><a href="https://jakearchibald.github.io/svgomg/" target="_blank">SVGOMG</a><br /><span><?php esc_html_e( 'Optimize your SVG files before uploading.', 'svg-support' ); ?></span></div>
-				</div>
-			</div>
-
-			<div class="svgs-card svgs-about-links">
-				<h3><?php esc_html_e( 'About the plugin', 'svg-support' ); ?></h3>
-				<p><a target="_blank" href="https://svg.support/"><?php esc_html_e( 'svg.support', 'svg-support' ); ?></a> · <a target="_blank" href="https://wordpress.org/plugins/svg-support/"><?php esc_html_e( 'WordPress.org', 'svg-support' ); ?></a> · <a target="_blank" href="https://github.com/benbodhi/svg-support"><?php esc_html_e( 'GitHub', 'svg-support' ); ?></a></p>
-				<p><?php esc_html_e( 'Follow', 'svg-support' ); ?> <a target="_blank" href="https://twitter.com/svgsupport">@SVGSupport</a> · <a target="_blank" href="https://twitter.com/benbodhi">@benbodhi</a> · <a target="_blank" href="https://farcaster.xyz/benbodhi">Farcaster</a></p>
-				<p>&copy; <a target="_blank" href="https://benbodhi.com/">Benbodhi</a></p>
 			</div>
 
 		</aside>
