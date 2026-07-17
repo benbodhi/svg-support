@@ -162,6 +162,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
     - Removed the third-party jQuery dropdown multiselect (~1,000 lines) — role pickers are now dependency-free native checkboxes
     - Fixed admin/front-end asset cache-busting: enqueued styles/scripts are now versioned with the plugin version (previously the version was empty, so browser caches never refreshed on update)
     - Settings screen assets (fonts, icons, styles, JS) only load on the SVG Support settings page
+    - Removed the CodeKit build dependency — stylesheets are now plain CSS edited directly, and minified JS is regenerated with a simple in-repo script
 
 = 2.5.17 =
 * **Security Enhancements**:

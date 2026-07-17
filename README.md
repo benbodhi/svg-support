@@ -72,6 +72,16 @@ This is the development repository for SVG Support. The official release version
 - [Plugin Page on WordPress.org](https://wordpress.org/plugins/svg-support/)
 - [SVN Repository](https://plugins.svn.wordpress.org/svg-support/)
 
+### Working on assets
+
+No build tool is required. Stylesheets in `css/` are plain CSS — edit them directly. If you change any front-end/editor JavaScript (`js/svgs-inline.js`, `js/svgs-inline-vanilla.js`, `js/gutenberg-filters.js`), regenerate the minified copies and commit them with your change:
+
+```bash
+bin/build-assets.sh
+```
+
+The script uses `npx terser`, so Node.js is the only prerequisite.
+
 ### Quick Test
 
 Want to try it out? Spin up a test site instantly:
