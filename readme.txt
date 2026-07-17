@@ -151,6 +151,18 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 == Changelog ==
 
+= 2.6.0 =
+* **New Features**:
+    - Completely redesigned settings screen with the new SVG Support brand — cleaner panels, real toggle switches, role picker chips, and a live code sample
+    - Settings now auto-save as you change them, with a save-state indicator (the classic Save button remains as a no-JS fallback)
+    - Advanced Mode now reveals its options instantly when toggled — no more save-and-reload
+    - New brand site at https://svg.support with tutorials and documentation
+
+* **Code Improvements**:
+    - Removed the third-party jQuery dropdown multiselect (~1,000 lines) — role pickers are now dependency-free native checkboxes
+    - Fixed admin/front-end asset cache-busting: enqueued styles/scripts are now versioned with the plugin version (previously the version was empty, so browser caches never refreshed on update)
+    - Settings screen assets (fonts, icons, styles, JS) only load on the SVG Support settings page
+
 = 2.5.17 =
 * **Security Enhancements**:
     - Fixed a stored XSS sanitization bypass via the .svgz extension - .svgz uploads are now sanitized just like .svg (decompressing the gzip stream first when present), instead of skipping sanitization. This completes the earlier fixes for CVE-2024-10222 / CVE-2023-6708. Thanks to Shivamani Vastrala for the report, and to Erwan Le Rousseau (WPScan, Automattic) for the coordinated disclosure
