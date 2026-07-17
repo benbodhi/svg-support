@@ -36,23 +36,39 @@
 		syncAdvanced();
 	}
 
-	/* ----- Save-state chip ----- */
+	/* ----- Save-state chip + Save button ----- */
 
 	var chip = document.getElementById('svgs-savestate');
 	var chipIcon = chip ? chip.querySelector('use') : null;
 	var chipText = chip ? chip.querySelector('span') : null;
+	var saveBtn = form.querySelector('.svgs-save-row input[type="submit"]');
+	var idleTimer = null;
 
 	function setState(state) {
-		if (!chip) {
-			return;
+		if (chip) {
+			chip.setAttribute('data-state', state);
+			var icons = { idle: 'cloud', saving: 'cloud', saved: 'circle-check', error: 'triangle-alert' };
+			if (chipIcon) {
+				chipIcon.setAttribute('href', window.SvgsSettings.iconsUrl + '#' + icons[state]);
+			}
+			if (chipText) {
+				chipText.textContent = window.SvgsSettings.i18n[state];
+			}
 		}
-		chip.setAttribute('data-state', state);
-		var icons = { idle: 'cloud', saving: 'cloud', saved: 'circle-check', error: 'triangle-alert' };
-		if (chipIcon) {
-			chipIcon.setAttribute('href', window.SvgsSettings.iconsUrl + '#' + icons[state]);
+		if (saveBtn) {
+			var labels = {
+				idle: window.SvgsSettings.i18n.btnIdle,
+				saving: window.SvgsSettings.i18n.btnSaving,
+				saved: window.SvgsSettings.i18n.btnSaved,
+				error: window.SvgsSettings.i18n.btnIdle
+			};
+			saveBtn.value = labels[state];
+			saveBtn.disabled = state === 'saving';
 		}
-		if (chipText) {
-			chipText.textContent = window.SvgsSettings.i18n[state];
+		// Settle back to the quiet idle look a moment after a save lands
+		clearTimeout(idleTimer);
+		if (state === 'saved') {
+			idleTimer = setTimeout(function () { setState('idle'); }, 2500);
 		}
 	}
 
@@ -96,6 +112,14 @@
 
 	form.addEventListener('change', function () {
 		queueSave(400);
+	});
+
+	// The Save button stays for familiarity: with JS active it saves
+	// immediately via AJAX instead of a full options.php round-trip.
+	form.addEventListener('submit', function (e) {
+		e.preventDefault();
+		clearTimeout(timer);
+		save();
 	});
 
 	// Text input: save while typing, slightly longer debounce

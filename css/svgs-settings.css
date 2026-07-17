@@ -135,14 +135,18 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
+	padding: 5px 12px;
+	border-radius: 999px;
 	font-size: 13px;
+	font-weight: 500;
 	color: var(--svgs-gray-400);
-	transition: color 0.2s var(--svgs-ease);
+	background: transparent;
+	transition: color 0.2s var(--svgs-ease), background 0.2s var(--svgs-ease);
 }
 
-.svgs-savestate[data-state="saved"] { color: var(--svgs-green); }
-.svgs-savestate[data-state="saving"] { color: var(--svgs-gray-500); }
-.svgs-savestate[data-state="error"] { color: var(--svgs-red); }
+.svgs-savestate[data-state="saved"] { color: #067A56; background: rgba(16, 185, 129, 0.12); }
+.svgs-savestate[data-state="saving"] { color: var(--svgs-gray-500); background: var(--svgs-gray-100); }
+.svgs-savestate[data-state="error"] { color: var(--svgs-red); background: var(--svgs-red-bg); }
 
 .svgs-ds .wp-header-end {
 	margin: 0;
@@ -501,10 +505,15 @@
 .svgs-btn-block { width: 100%; }
 .svgs-btn-sm { height: 34px; padding: 0 14px; font-size: 13px; }
 
+/* The Save button stays visible even with auto-save active — users expect
+   it, and with JS it becomes an instant explicit-save with live feedback. */
 .svgs-save-row { margin: 4px 0 0; }
 
-/* Hide the fallback save button once JS/auto-save is active */
-body.svgs-js .svgs-save-row { display: none; }
+.svgs-save-row .svgs-btn:disabled {
+	opacity: 0.65;
+	cursor: default;
+	transform: none;
+}
 
 /* ---------- Sidebar cards ---------- */
 

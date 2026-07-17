@@ -50,10 +50,13 @@ function bodhi_svgs_admin_settings_assets() {
 				'nonce'    => wp_create_nonce( 'bodhi_svgs_autosave' ),
 				'iconsUrl' => plugins_url( 'admin/img/icons.svg', BODHI_SVGS_PLUGIN_FILE ),
 				'i18n'     => array(
-					'idle'   => __( 'All changes saved', 'svg-support' ),
-					'saving' => __( 'Saving…', 'svg-support' ),
-					'saved'  => __( 'Changes saved', 'svg-support' ),
-					'error'  => __( 'Couldn\'t save — retrying on next change', 'svg-support' ),
+					'idle'      => __( 'All changes saved', 'svg-support' ),
+					'saving'    => __( 'Saving…', 'svg-support' ),
+					'saved'     => __( 'Changes saved', 'svg-support' ),
+					'error'     => __( 'Couldn\'t save — retrying on next change', 'svg-support' ),
+					'btnIdle'   => __( 'Save changes', 'svg-support' ),
+					'btnSaving' => __( 'Saving…', 'svg-support' ),
+					'btnSaved'  => __( 'Saved', 'svg-support' ),
 				),
 			)
 		) . ';',
