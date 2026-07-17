@@ -156,6 +156,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
     - Completely redesigned settings screen with the new SVG Support brand — cleaner panels, real toggle switches, role picker chips, and a live code sample
     - Settings now auto-save as you change them, with a save-state indicator (the classic Save button remains as a no-JS fallback)
     - Advanced Mode now reveals its options instantly when toggled — no more save-and-reload
+    - Scannable QR codes for the BTC and ETH donation addresses (tap the QR icon next to each address)
     - New brand site at https://svg.support with tutorials and documentation
 
 * **Code Improvements**:

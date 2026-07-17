@@ -286,11 +286,23 @@ $bodhi_svgs_bypass_roles   = isset( $bodhi_svgs_options['sanitize_on_upload_role
 				</a>
 				<div class="svgs-crypto">
 					<div class="svgs-crypto-item">
-						<strong>BTC</strong>
+						<details class="svgs-qr">
+							<summary title="<?php esc_attr_e( 'Show QR code', 'svg-support' ); ?>">
+								<strong>BTC</strong>
+								<?php bodhi_svgs_icon( 'qr-code', 14 ); ?>
+							</summary>
+							<span class="svgs-qr-box"><img src="<?php echo esc_url( plugins_url( 'admin/img/qr-btc.svg', BODHI_SVGS_PLUGIN_FILE ) ); ?>" width="124" height="124" alt="<?php esc_attr_e( 'Bitcoin donation address QR code', 'svg-support' ); ?>" /></span>
+						</details>
 						<span>1qF8r2HkTLifND7WLGfWmvxfXc9ze55DZ</span>
 					</div>
 					<div class="svgs-crypto-item">
-						<strong>ETH</strong>
+						<details class="svgs-qr">
+							<summary title="<?php esc_attr_e( 'Show QR code', 'svg-support' ); ?>">
+								<strong>ETH</strong>
+								<?php bodhi_svgs_icon( 'qr-code', 14 ); ?>
+							</summary>
+							<span class="svgs-qr-box"><img src="<?php echo esc_url( plugins_url( 'admin/img/qr-eth.svg', BODHI_SVGS_PLUGIN_FILE ) ); ?>" width="124" height="124" alt="<?php esc_attr_e( 'Ethereum donation address QR code', 'svg-support' ); ?>" /></span>
+						</details>
 						<span>0x599695Eb51aFe2e5a0DAD60aD9c89Bc8f10B54f4</span>
 					</div>
 				</div>

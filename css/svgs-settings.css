@@ -591,15 +591,13 @@
 .svgs-crypto-item:last-child { margin-bottom: 0; }
 
 .svgs-crypto strong {
-	display: block;
 	font-size: 11px;
 	font-weight: 600;
 	letter-spacing: 0.07em;
 	color: var(--svgs-gray-300);
-	margin-bottom: 3px;
 }
 
-.svgs-crypto span {
+.svgs-crypto-item > span {
 	display: block;
 	font-family: var(--svgs-font-mono);
 	font-size: 10.5px;
@@ -607,6 +605,43 @@
 	word-break: break-all;
 	line-height: 1.5;
 }
+
+/* QR reveal (native <details> — works without JS) */
+.svgs-qr summary {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	list-style: none;
+	margin-bottom: 3px;
+	border-radius: 4px;
+}
+
+.svgs-qr summary::-webkit-details-marker { display: none; }
+
+.svgs-qr summary .svgs-icon {
+	color: var(--svgs-gray-400);
+	transition: color 0.15s var(--svgs-ease);
+}
+
+.svgs-qr summary:hover .svgs-icon,
+.svgs-qr[open] summary .svgs-icon { color: var(--svgs-citron-300); }
+
+.svgs-qr summary:focus-visible {
+	outline: none;
+	box-shadow: var(--svgs-shadow-focus);
+}
+
+.svgs-qr-box {
+	display: inline-block;
+	background: #fff;
+	border-radius: var(--svgs-radius-sm);
+	padding: 6px;
+	margin: 4px 0 8px;
+	line-height: 0;
+}
+
+.svgs-qr-box img { display: block; }
 
 /* Stacked card buttons */
 .svgs-btn-stack {
