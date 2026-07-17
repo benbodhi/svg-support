@@ -279,7 +279,7 @@ $bodhi_svgs_bypass_roles   = isset( $bodhi_svgs_options['sanitize_on_upload_role
 			<div class="svgs-card svgs-card-ink">
 				<div class="svgs-stat">1,000,000+</div>
 				<div class="svgs-stat-caption"><?php esc_html_e( 'active installs and counting', 'svg-support' ); ?></div>
-				<p><?php esc_html_e( 'Maintained by one person since 2013. If it\'s useful, a donation keeps it going.', 'svg-support' ); ?></p>
+				<p><?php esc_html_e( 'Maintained by one person since 2013.', 'svg-support' ); ?><br /><?php esc_html_e( 'If it\'s useful, a donation keeps it going.', 'svg-support' ); ?></p>
 				<a class="svgs-btn svgs-btn-accent svgs-btn-sm svgs-btn-block" target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=Z9R7JERS82EQQ&amp;source=url">
 					<?php bodhi_svgs_icon( 'heart', 15 ); ?>
 					<?php esc_html_e( 'Donate via PayPal', 'svg-support' ); ?>
