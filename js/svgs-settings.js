@@ -116,7 +116,13 @@
 
 	// The Save button stays for familiarity: with JS active it saves
 	// immediately via AJAX instead of a full options.php round-trip.
+	// If the last auto-save errored (blocked admin-ajax, expired nonce),
+	// let the click fall through to the classic options.php submit so
+	// saving always remains possible.
 	form.addEventListener('submit', function (e) {
+		if (chip && chip.getAttribute('data-state') === 'error') {
+			return;
+		}
 		e.preventDefault();
 		clearTimeout(timer);
 		save();
