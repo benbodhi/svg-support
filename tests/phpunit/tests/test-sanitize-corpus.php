@@ -85,7 +85,8 @@ class Test_Sanitize_Corpus extends WP_UnitTestCase {
 
 		$decoded = gzdecode( $out );
 		$this->assertStringNotContainsStringIgnoringCase( '<script', $decoded, 'decoded payload must be clean' );
-		$this->assertStringContainsString( '<rect', $decoded, 'decoded payload should keep the safe shape' );
+		// script-tag.svg carries a <path> as its safe shape.
+		$this->assertStringContainsString( '<path', $decoded, 'decoded payload should keep the safe shape' );
 	}
 
 	/**

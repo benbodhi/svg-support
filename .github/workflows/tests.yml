@@ -81,3 +81,42 @@ jobs:
 
       - name: Run PHPUnit
         run: wp-env run tests-cli --env-cwd=wp-content/plugins/svg-support/tests/phpunit ./vendor/bin/phpunit
+
+  e2e:
+    name: Playwright e2e (wp-env)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install node dependencies
+        run: npm install --no-fund --no-audit
+
+      - name: Start wp-env (committed .wp-env.json, dev site on :8888)
+        uses: nick-fields/retry@v4
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          shell: bash
+          command: |
+            npx wp-env start --update
+            npx wp-env run cli wp cli info
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run e2e specs
+        run: npm run test:e2e
+        env:
+          WP_BASE_URL: http://localhost:8888
+
+      - name: Upload Playwright artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: tests/e2e/artifacts
+          retention-days: 7
