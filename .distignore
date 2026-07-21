@@ -32,3 +32,13 @@
 /bin
 /composer.json
 /composer.lock
+
+# Test harness (never shipped)
+/tests
+/node_modules
+/package.json
+/package-lock.json
+/.wp-env.json
+/.wp-env.override.json
+/playwright-report
+/test-results

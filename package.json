@@ -1,0 +1,18 @@
+{
+	"name": "svg-support-dev",
+	"private": true,
+	"description": "Development harness for the SVG Support plugin (wp-env, Playwright e2e, PHPUnit). Not shipped to WordPress.org.",
+	"devDependencies": {
+		"@playwright/test": "^1.49.0",
+		"@wordpress/e2e-test-utils-playwright": "^1.16.0",
+		"@wordpress/env": "^10.17.0"
+	},
+	"scripts": {
+		"env:start": "wp-env start",
+		"env:stop": "wp-env stop",
+		"env:destroy": "wp-env destroy",
+		"test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/svg-support tests/phpunit/vendor/bin/phpunit -c tests/phpunit/phpunit.xml",
+		"test:e2e": "playwright test --config tests/e2e/playwright.config.js",
+		"test": "npm run test:php && npm run test:e2e"
+	}
+}

@@ -24,3 +24,12 @@
 
 # Other ignores
 composer.lock
+
+# Test harness
+/node_modules/
+/tests/phpunit/vendor/
+/tests/phpunit/composer.lock
+/tests/e2e/artifacts/
+/playwright-report/
+/test-results/
+/.wp-env.override.json
