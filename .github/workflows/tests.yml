@@ -1,0 +1,83 @@
+name: Tests
+
+# Regression suite for the compatibility covenant. Two jobs:
+#   1. sanitizer  — fast, no Docker: runs the standalone sanitizer corpus
+#                   against the real vendored library + the plugin's whitelists.
+#   2. phpunit    — WordPress integration tests via wp-env (settings sanitize
+#                   contract, file-based sanitizer, upload-prefilter validation
+#                   incl. the .svgz XSS regression).
+#
+# wp-env is booted the same way as plugin-check.yml (no URL plugins, Node 20,
+# verified start with retry) to dodge the known wp-env silent-exit bug.
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  sanitizer:
+    name: Sanitizer corpus (standalone)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: dom, libxml, mbstring, zlib
+          coverage: none
+
+      - name: Run standalone sanitizer suite
+        run: php tests/sanitizer/run.php
+
+  phpunit:
+    name: PHPUnit (wp-env, PHP ${{ matrix.php }} / WP latest)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 7.4 = version floor, 8.2 = mainstream. PHPUnit 9.6 is rock-solid on
+        # both. 8.4 is deferred until a PHPUnit 10/11 bump (9.6 turns 8.4
+        # deprecations into failures). Add specific older-WP legs the same way.
+        php: [ '7.4', '8.2' ]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configure wp-env (pin PHP for this matrix leg, latest stable WP)
+        run: |
+          # No URL plugins — that triggers the wp-env start bug (see plugin-check.yml).
+          cat > .wp-env.json <<JSON
+          {
+            "core": null,
+            "phpVersion": "${{ matrix.php }}",
+            "plugins": [ "." ]
+          }
+          JSON
+          npm -g --no-fund install @wordpress/env
+
+      - name: Start wp-env
+        uses: nick-fields/retry@v4
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          shell: bash
+          command: |
+            wp-env start --update
+            wp-env run tests-cli wp cli info
+
+      - name: Install PHPUnit dependencies
+        run: wp-env run tests-cli --env-cwd=wp-content/plugins/svg-support/tests/phpunit composer install --no-interaction --prefer-dist
+
+      - name: Run PHPUnit
+        run: wp-env run tests-cli --env-cwd=wp-content/plugins/svg-support/tests/phpunit ./vendor/bin/phpunit
