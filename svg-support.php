@@ -32,10 +32,10 @@ define('BODHI_SVGS_PLUGIN_PATH', plugin_dir_path(__FILE__));       // define the
 define('BODHI_SVGS_PLUGIN_URL', plugin_dir_url(__FILE__));         // define the plugin url for use in enqueue
 $bodhi_svgs_options = get_option('bodhi_svgs_settings', array());  // Retrieve our plugin settings
 
-// ensure $bodhi_svgs_options is always an array
+// ensure $bodhi_svgs_options is always an array (normalized in memory;
+// persisted once on activation/upgrade rather than on every request)
 if (!is_array($bodhi_svgs_options)) {
 	$bodhi_svgs_options = [];
-	update_option('bodhi_svgs_settings', $bodhi_svgs_options);
 }
 
 /**
@@ -90,10 +90,14 @@ function bodhi_svgs_version_updates() {
     
     // Store the old version for comparison
     $old_version = $stored_version;
-    
+
     // Update to current version
     update_option('bodhi_svgs_plugin_version', BODHI_SVGS_VERSION);
-    
+
+    // Persist merged setting defaults once per upgrade (they are applied
+    // in memory on every load; see bodhi_svgs_apply_setting_defaults)
+    bodhi_svgs_persist_settings();
+
     // If coming from before 2.5.14, run cleanup
     if (version_compare($old_version, '2.5.14', '<')) {
         require_once BODHI_SVGS_PLUGIN_PATH . 'functions/meta-cleanup.php';
@@ -104,31 +108,50 @@ add_action('admin_init', 'bodhi_svgs_version_updates');
 
 /**
  * Defaults for better security in versions >= 2.5
+ *
+ * Historically these defaults were written to the database on every request.
+ * They are now applied in memory on load (identical values, identical legacy
+ * string normalization) and persisted once — on activation and on version
+ * upgrade — via bodhi_svgs_persist_settings().
  */
-// Enable 'sanitize_svg_front_end' by default
-if ( !isset($bodhi_svgs_options['sanitize_svg_front_end']) ) {
-	$bodhi_svgs_options['sanitize_svg_front_end'] = 'on';
-	update_option( 'bodhi_svgs_settings', $bodhi_svgs_options );
-}
+function bodhi_svgs_apply_setting_defaults( $options ) {
 
-// Allow only admins to upload SVGs by default
-if ( !isset($bodhi_svgs_options['restrict']) || $bodhi_svgs_options['restrict'] == "on" ) {
-	$bodhi_svgs_options['restrict'] = array('administrator');
-	update_option( 'bodhi_svgs_settings', $bodhi_svgs_options );
-}
-elseif (isset($bodhi_svgs_options['restrict']) && $bodhi_svgs_options['restrict'] == "none" ) {
-	$bodhi_svgs_options['restrict'] = array("none");
-	update_option( 'bodhi_svgs_settings', $bodhi_svgs_options );
-}
+	// Enable 'sanitize_svg_front_end' by default
+	if ( ! isset( $options['sanitize_svg_front_end'] ) ) {
+		$options['sanitize_svg_front_end'] = 'on';
+	}
 
-// By default sanitize on upload for everyone (no bypass roles)
-if ( !isset($bodhi_svgs_options['sanitize_on_upload_roles']) ) {
-	$bodhi_svgs_options['sanitize_on_upload_roles'] = array();
-	update_option( 'bodhi_svgs_settings', $bodhi_svgs_options );
+	// Allow only admins to upload SVGs by default (legacy 'on' string maps to
+	// the same); legacy 'none' string maps to the array sentinel
+	if ( ! isset( $options['restrict'] ) || $options['restrict'] == 'on' ) {
+		$options['restrict'] = array( 'administrator' );
+	} elseif ( $options['restrict'] == 'none' ) {
+		$options['restrict'] = array( 'none' );
+	}
+
+	// By default sanitize on upload for everyone (no bypass roles); legacy
+	// 'none' string maps to the array sentinel
+	if ( ! isset( $options['sanitize_on_upload_roles'] ) ) {
+		$options['sanitize_on_upload_roles'] = array();
+	} elseif ( $options['sanitize_on_upload_roles'] == 'none' ) {
+		$options['sanitize_on_upload_roles'] = array( 'none' );
+	}
+
+	return $options;
 }
-elseif ( isset($bodhi_svgs_options['sanitize_on_upload_roles']) && $bodhi_svgs_options['sanitize_on_upload_roles'] == "none") {
-	$bodhi_svgs_options['sanitize_on_upload_roles'] = array("none");
-	update_option( 'bodhi_svgs_settings', $bodhi_svgs_options );
+$bodhi_svgs_options = bodhi_svgs_apply_setting_defaults( $bodhi_svgs_options );
+
+/**
+ * Persist the in-memory settings (defaults merged) to the database.
+ * Called on activation and once per version upgrade — not per request.
+ */
+function bodhi_svgs_persist_settings() {
+	global $bodhi_svgs_options;
+
+	$options = $bodhi_svgs_options;
+	unset( $options['sanitize_svg'] ); // legacy pre-2.5 key, never re-persisted
+
+	update_option( 'bodhi_svgs_settings', $options );
 }
 
 /**
@@ -136,6 +159,7 @@ elseif ( isset($bodhi_svgs_options['sanitize_on_upload_roles']) && $bodhi_svgs_o
  */
 // Activation Hook
 function bodhi_svgs_plugin_activation() {
+    bodhi_svgs_persist_settings();
     bodhi_svgs_remove_old_sanitize_setting();
 }
 register_activation_hook(__FILE__, 'bodhi_svgs_plugin_activation');
