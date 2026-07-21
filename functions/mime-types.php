@@ -117,23 +117,3 @@ function bodhi_svgs_allow_unsupported_svg_upload( $check_mime, $mime_type = null
 	return $check_mime;
 }
 add_filter( 'wp_prevent_unsupported_mime_type_uploads', 'bodhi_svgs_allow_unsupported_svg_upload', 10, 2 );
-
-function bodhi_svgs_multisite_settings($mimes) {
-    // Check if this is a multisite installation
-    if (is_multisite()) {
-        // Get the site ID
-        $blog_id = get_current_blog_id();
-        
-        // Allow SVG on main site
-        if (is_main_site()) {
-            return $mimes;
-        }
-        
-        // For subsites, check if upload_files capability is allowed
-        if (get_site_option('upload_space_check_disabled')) {
-            return $mimes;
-        }
-    }
-    return $mimes;
-}
-add_filter('upload_mimes', 'bodhi_svgs_multisite_settings', 98);

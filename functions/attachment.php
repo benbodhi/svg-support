@@ -113,6 +113,10 @@ function bodhi_svgs_get_dimensions( $svg ) {
  */
 function bodhi_svgs_generate_svg_attachment_metadata( $metadata, $attachment_id ) {
 
+	// Registered custom sizes live in this core global; without the declaration
+	// the custom-size branches below never fire.
+	global $_wp_additional_image_sizes;
+
 	$mime = get_post_mime_type( $attachment_id );
 
 	if ( $mime == 'image/svg+xml' ) {

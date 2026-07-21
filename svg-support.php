@@ -64,10 +64,6 @@ include( BODHI_SVGS_PLUGIN_PATH . 'functions/attribute-control.php' );		// auto 
 include( BODHI_SVGS_PLUGIN_PATH . 'functions/featured-image.php' );			// allow inline SVG for featured images
 include( BODHI_SVGS_PLUGIN_PATH . 'functions/meta-cleanup.php' );			// cleanup duplicate meta entries
 
-// Include WP All Import integration only if WP All Import is active
-// if ( defined( 'PMXI_VERSION' ) ) {
-// 	include( BODHI_SVGS_PLUGIN_PATH . 'integrations/wp-all-import.php' );
-// }
 
 /**
  * Handle version updates and migrations
