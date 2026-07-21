@@ -47,8 +47,16 @@ test.describe( 'SVG Support settings — autosave & reveal', () => {
 	test( 'css_target text input autosaves and persists', async ( { page } ) => {
 		await page.goto( SETTINGS );
 
+		// css_target lives inside the Advanced Mode section, which is hidden
+		// while Advanced Mode is off. Enable it first so the field is reachable.
+		const toggle = page.locator( ADVANCED );
+		if ( ! ( await toggle.isChecked() ) ) {
+			await toggle.check( { force: true } );
+			await expect( page.locator( '#svgs-savestate' ) ).toHaveAttribute( 'data-state', 'saved', { timeout: 6000 } );
+		}
+
 		const input = page.locator( CSS_TARGET );
-		await expect( input ).toHaveCount( 1 );
+		await expect( input ).toBeVisible();
 
 		const value = 'style-svg-e2e';
 		await input.fill( value );
@@ -61,6 +69,10 @@ test.describe( 'SVG Support settings — autosave & reveal', () => {
 		// Restore empty (falls back to the default "style-svg" at render time).
 		await page.locator( CSS_TARGET ).fill( '' );
 		await expect( page.locator( '#svgs-savestate' ) ).toHaveAttribute( 'data-state', 'saved', { timeout: 8000 } );
+
+		// Leave Advanced Mode off so the site is as we found it.
+		await page.locator( ADVANCED ).uncheck( { force: true } );
+		await expect( page.locator( '#svgs-savestate' ) ).toHaveAttribute( 'data-state', 'saved', { timeout: 6000 } );
 	} );
 
 	test( 'classic no-JS fallback form is intact', async ( { page } ) => {
