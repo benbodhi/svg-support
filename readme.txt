@@ -536,6 +536,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 == Upgrade Notice ==
 
+= 2.6.0 =
+Completely redesigned settings screen with auto-save and instant Advanced Mode reveal. No settings or behavior changes — everything keeps working exactly as before. Also removes ~1,000 lines of third-party JS and fixes asset cache-busting on updates.
+
 = 2.5.17 =
 Important security patch. Fixes a stored XSS vulnerability where .svgz uploads bypassed SVG sanitization (CVE-2024-10222 / CVE-2023-6708). Please update immediately.
 
