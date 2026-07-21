@@ -19,6 +19,8 @@ SVG Support enables secure SVG uploads with powerful features for both basic use
 
 ✨ **Key Features**:
 - Secure SVG uploads with automatic sanitization
+- **Native Inline SVG block** — insert any SVG from your media library as true inline SVG, with width/height/alignment, a `currentColor` toggle and custom classes
+- **Server-side rendering engine** — inlines SVGs in PHP as the page builds: no front-end JavaScript, no flash of the un-swapped image, no layout shift, and image attributes preserved
 - Inline rendering for direct CSS/JS manipulation
 - File size optimization through minification
 - Role-based access control
@@ -56,10 +58,15 @@ SVG Support enables secure SVG uploads with powerful features for both basic use
 - Customize with hooks and filters for tailored functionality
 
 **Block Editor Usage**:
-- Use Advanced Mode to enable inline rendering:
+- Use the **Inline SVG block** to drop an SVG straight into any post or page as true inline SVG — no settings or CSS classes required
+- Or use Advanced Mode with the classic class-targeting approach:
   - Add the `"style-svg"` class to Image blocks
   - Add the `"style-svg"` class to Cover blocks to render SVG backgrounds inline
 - Use "Skip Nested SVGs" setting to control inline rendering of SVGs within Cover blocks
+
+**Rendering engine (new in 3.0)**:
+- New installs render inline SVGs server-side by default (faster, no layout shift)
+- Existing sites keep the classic JavaScript engine and can switch to server-side any time under Settings → SVG Support → Advanced Mode → Rendering engine (fully reversible)
 
 **Classic Editor Usage**:
 - Use Advanced Mode to add the `"style-svg"` class to `<img>` tags for inline rendering
