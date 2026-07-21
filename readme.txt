@@ -2,7 +2,7 @@
 Contributors: Benbodhi
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z9R7JERS82EQQ
 Tags: svg, vector, safe svg, sanitization, mime type
-Requires at least: 5.8
+Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 2.5.16
@@ -150,6 +150,27 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Changelog ==
+
+= 3.0.0 =
+**The biggest update in SVG Support's history — and the free plugin stays free forever.** Everything you use today keeps working exactly as it did; nothing is removed, and no action is required on upgrade.
+
+* **New: Inline SVG block**
+    - Insert any SVG from your media library as true inline SVG — no class-swap gymnastics
+    - Width, height and alignment controls, a custom ID field, and custom classes
+    - "Inherit text color" toggle maps the SVG's fills to `currentColor` so it follows your theme
+    - Renders clean markup with no front-end JavaScript
+
+* **New: server-side rendering engine**
+    - Inlines your SVGs in PHP as the page is built, instead of swapping images in the browser after load
+    - No flash of the un-swapped image, no layout shift, no front-end JavaScript on the critical path — measurably better loading performance
+    - Preserves the image's width, height, alt text and ARIA/data attributes (the old JavaScript swap dropped these)
+    - Sanitizes on render and strips remote `<image>` references for extra safety
+    - **New installs use it by default. Existing sites keep the classic JavaScript engine unchanged** — switch over any time with the new "Rendering engine" option under Advanced Mode (fully reversible)
+
+* **Security & maintenance**
+    - Updated the bundled DOMPurify library to 3.4.12
+    - Modernized the codebase: settings defaults no longer write to the database on every page load, and dead code paths were removed
+    - Requires WordPress 6.0 or newer (the server-side engine relies on a WordPress 6.0 rendering hook). Sites on older WordPress keep running 2.6.0.
 
 = 2.6.0 =
 * **New Features**:
@@ -535,6 +556,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+
+= 3.0.0 =
+The biggest update ever — a native Inline SVG block and a faster server-side rendering engine — and the free plugin stays free forever. Everything you use today keeps working exactly the same; no action needed. New rendering engine is opt-in for existing sites. Now requires WordPress 6.0+.
 
 = 2.6.0 =
 Completely redesigned settings screen with auto-save and instant Advanced Mode reveal. No settings or behavior changes — everything keeps working exactly as before. Also removes ~1,000 lines of third-party JS and fixes asset cache-busting on updates.
