@@ -220,6 +220,30 @@ class Test_Inliner extends WP_UnitTestCase {
 		$this->assertSame( $first, $second );
 	}
 
+	public function test_invalidate_forces_fresh_render_even_with_unchanged_mtime() {
+		$this->server_mode_on();
+		list( , $path, ) = $this->make_svg_attachment( file_get_contents( $this->fixture( 'benign/simple-icon.svg' ) ), 'inv.svg' );
+
+		$first = Inliner::get_inline_svg( $path );
+		$this->assertStringContainsString( '<path', $first );
+
+		// Overwrite the file with different content but pin the SAME mtime, to
+		// simulate a same-second in-place edit (the mtime-only cache would miss this).
+		$mtime = filemtime( $path );
+		file_put_contents( $path, file_get_contents( $this->fixture( 'benign/gradient.svg' ) ) );
+		touch( $path, $mtime );
+		clearstatcache( true, $path );
+
+		// Unchanged mtime = stale cache hit.
+		$this->assertSame( $first, Inliner::get_inline_svg( $path ), 'same mtime should hit the cache' );
+
+		// Explicit invalidation forces a fresh render.
+		InlineCache::invalidate( $path );
+		$fresh = Inliner::get_inline_svg( $path );
+		$this->assertNotSame( $first, $fresh );
+		$this->assertStringContainsString( 'linearGradient', $fresh );
+	}
+
 	/* ------------------------------------------------------- currentColor */
 
 	public function test_currentcolor_flavor_maps_fills() {
