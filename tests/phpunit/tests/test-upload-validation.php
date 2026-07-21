@@ -63,7 +63,7 @@ class Test_Upload_Validation extends WP_UnitTestCase {
 
 		$res = $this->run_prefilter( $file );
 
-		$this->assertSame( '', (string) ( $res['error'] ?? '' ), 'valid SVG should not set an error' );
+		$this->assertEmpty( ( $res['error'] ?? '' ), 'valid SVG should not set an error' );
 		$cleaned = file_get_contents( $res['tmp_name'] );
 		$this->assertStringNotContainsStringIgnoringCase( '<script', $cleaned, 'script must be stripped on upload' );
 		$this->assertStringContainsString( '<rect', $cleaned, 'safe content should survive' );
@@ -79,7 +79,7 @@ class Test_Upload_Validation extends WP_UnitTestCase {
 
 		$res = $this->run_prefilter( $file );
 
-		$this->assertSame( '', (string) ( $res['error'] ?? '' ), 'plaintext .svgz that is valid SVG should be accepted (then sanitized)' );
+		$this->assertEmpty( ( $res['error'] ?? '' ), 'plaintext .svgz that is valid SVG should be accepted (then sanitized)' );
 		$cleaned = file_get_contents( $res['tmp_name'] );
 		$this->assertStringNotContainsStringIgnoringCase( '<script', $cleaned, '.svgz must not bypass sanitization' );
 	}
@@ -91,7 +91,7 @@ class Test_Upload_Validation extends WP_UnitTestCase {
 
 		$res = $this->run_prefilter( $file );
 
-		$this->assertSame( '', (string) ( $res['error'] ?? '' ) );
+		$this->assertEmpty( ( $res['error'] ?? '' ) );
 		$out = file_get_contents( $res['tmp_name'] );
 		$decoded = ( substr( $out, 0, 3 ) === "\x1f\x8b\x08" ) ? gzdecode( $out ) : $out;
 		$this->assertStringNotContainsStringIgnoringCase( '<script', $decoded );
@@ -112,6 +112,6 @@ class Test_Upload_Validation extends WP_UnitTestCase {
 
 		$res = $this->run_prefilter( $file );
 
-		$this->assertSame( '', (string) ( $res['error'] ?? '' ) );
+		$this->assertEmpty( ( $res['error'] ?? '' ) );
 	}
 }

@@ -25,6 +25,11 @@ require_once $_tests_dir . '/includes/functions.php';
 tests_add_filter(
 	'muplugins_loaded',
 	function () {
+		// svg-support.php assigns $sanitizer at file top level. Loaded normally
+		// by WordPress that is global scope; required inside this closure it
+		// would be closure-local, so declare the globals first to bind the
+		// assignments to the true globals the plugin's functions read.
+		global $sanitizer, $bodhi_svgs_options;
 		require dirname( __DIR__, 2 ) . '/svg-support.php';
 	}
 );
