@@ -175,6 +175,26 @@ $bodhi_svgs_bypass_roles   = isset( $bodhi_svgs_options['sanitize_on_upload_role
 						<div class="svgs-advanced">
 
 							<div class="svgs-row">
+								<div class="svgs-field-label"><?php esc_html_e( 'Rendering engine', 'svg-support' ); ?></div>
+								<div class="svgs-chips">
+									<label class="svgs-chip">
+										<input type="radio" name="bodhi_svgs_settings[render_mode]" value="server" <?php checked( 'server' === bodhi_svgs_render_mode() ); ?> />
+										<span class="svgs-chip-check"><?php bodhi_svgs_icon( 'check', 13 ); ?></span>
+										<span><?php esc_html_e( 'Server-side (recommended)', 'svg-support' ); ?></span>
+									</label>
+									<label class="svgs-chip">
+										<input type="radio" name="bodhi_svgs_settings[render_mode]" value="legacy" <?php checked( 'legacy' === bodhi_svgs_render_mode() ); ?> />
+										<span class="svgs-chip-check"><?php bodhi_svgs_icon( 'check', 13 ); ?></span>
+										<span><?php esc_html_e( 'JavaScript (classic)', 'svg-support' ); ?></span>
+									</label>
+								</div>
+								<p class="svgs-hint">
+									<?php esc_html_e( 'Server-side inlines your SVGs in PHP as the page is built — no front-end JavaScript, no flash of the un-swapped image, no layout shift, and image attributes (width, height, alt, aria) are preserved. JavaScript is the classic engine that swaps images in the browser after load. Switching is safe and instantly reversible.', 'svg-support' ); ?>
+									<?php esc_html_e( 'Note: the server engine targets the class on the image itself (plus Force inline SVG and inline featured images). If you rely on targeting a container element\'s class, keep the JavaScript engine.', 'svg-support' ); ?>
+								</p>
+							</div>
+
+							<div class="svgs-row">
 								<div class="svgs-field-label"><?php esc_html_e( 'CSS class to target', 'svg-support' ); ?></div>
 								<input id="bodhi_svgs_settings[css_target]" class="svgs-input" name="bodhi_svgs_settings[css_target]" type="text" placeholder="style-svg" value="<?php echo isset( $bodhi_svgs_options['css_target'] ) ? esc_attr( $bodhi_svgs_options['css_target'] ) : ''; ?>" />
 								<p class="svgs-hint">

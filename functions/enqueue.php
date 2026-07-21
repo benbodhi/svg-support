@@ -94,6 +94,12 @@ add_action( 'wp_enqueue_scripts', 'bodhi_svgs_frontend_css' );
 function bodhi_svgs_frontend_js() {
 	global $bodhi_svgs_options;
 
+	// The server-side engine sanitizes in PHP before output — no browser
+	// DOMPurify pass needed, so skip the frontend library entirely.
+	if ( 'server' === bodhi_svgs_render_mode() ) {
+		return;
+	}
+
 	if ( ! empty( $bodhi_svgs_options['sanitize_svg_front_end'] ) && $bodhi_svgs_options['sanitize_svg_front_end'] === 'on' && bodhi_svgs_advanced_mode() === true ) {
 		$bodhi_svgs_js_footer = ! empty( $bodhi_svgs_options['js_foot_choice'] );
 		wp_enqueue_script( 'bodhi-dompurify-library', BODHI_SVGS_PLUGIN_URL . 'vendor/DOMPurify/DOMPurify.min.js', array(), '2.5.9', $bodhi_svgs_js_footer );
@@ -106,6 +112,12 @@ add_action( 'wp_enqueue_scripts', 'bodhi_svgs_frontend_js', 9 );
  */
 function bodhi_svgs_inline() {
 	global $bodhi_svgs_options;
+
+	// In server render mode the PHP engine replaces images at render time —
+	// the swap script must not load (that's the whole point).
+	if ( 'server' === bodhi_svgs_render_mode() ) {
+		return;
+	}
 
 	if ( bodhi_svgs_advanced_mode() ) {
 		$force_inline_svg_active = ! empty( $bodhi_svgs_options['force_inline_svg'] ) ? 'true' : 'false';

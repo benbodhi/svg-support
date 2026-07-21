@@ -56,6 +56,11 @@ function bodhi_svgs_settings_sanitize($input) {
 		$output['css_target'] = esc_attr( sanitize_text_field( $output['css_target'] ) );
 	}
 
+	// Whitelist render_mode when present (absent = upgraded site on legacy)
+	if ( isset( $output['render_mode'] ) && ! in_array( $output['render_mode'], array( 'legacy', 'server' ), true ) ) {
+		unset( $output['render_mode'] );
+	}
+
 	// Handle sanitize_svg_front_end setting
 	if (!isset($output['sanitize_svg_front_end']) || $output['sanitize_svg_front_end'] !== 'on') {
 		$output['sanitize_svg_front_end'] = false;

@@ -63,6 +63,7 @@ include( BODHI_SVGS_PLUGIN_PATH . 'functions/enqueue.php' );				// enqueue js & 
 include( BODHI_SVGS_PLUGIN_PATH . 'functions/attribute-control.php' );		// auto set SVG class & remove dimensions during insertion
 include( BODHI_SVGS_PLUGIN_PATH . 'functions/featured-image.php' );			// allow inline SVG for featured images
 include( BODHI_SVGS_PLUGIN_PATH . 'functions/meta-cleanup.php' );			// cleanup duplicate meta entries
+include( BODHI_SVGS_PLUGIN_PATH . 'src/rendering/bootstrap.php' );			// server-side inline rendering engine (v3)
 
 
 /**
@@ -159,6 +160,14 @@ function bodhi_svgs_persist_settings() {
  */
 // Activation Hook
 function bodhi_svgs_plugin_activation() {
+    // Fresh installs (no prior settings, no prior version marker) start on the
+    // server-side rendering engine. Upgraded sites keep the legacy JS swap —
+    // identical behavior to before — until they opt in on the settings screen.
+    if ( false === get_option( 'bodhi_svgs_settings' ) && false === get_option( 'bodhi_svgs_plugin_version' ) ) {
+        global $bodhi_svgs_options;
+        $bodhi_svgs_options['render_mode'] = 'server';
+    }
+
     bodhi_svgs_persist_settings();
     bodhi_svgs_remove_old_sanitize_setting();
 }
