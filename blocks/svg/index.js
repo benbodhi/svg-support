@@ -1,10 +1,11 @@
 /**
- * SVG Support — Inline SVG block (editor script).
+ * SVG Support — the SVG block (editor script).
  *
  * Deliberately build-free: plain wp.element.createElement against the block
- * editor APIs, shipped as-is. The block is dynamic — the server renders the
- * final inline SVG through the same engine the front end uses, so the saved
- * content is just the block comment.
+ * editor APIs, shipped as-is. The block is dynamic — the server renders it. By
+ * default the SVG is a normal image; the optional "Render inline" mode embeds
+ * it through the same engine the front end uses so it can be styled/recoloured
+ * with CSS.
  */
 ( function ( wp ) {
 	'use strict';
@@ -21,6 +22,7 @@
 	var TextControl = wp.components.TextControl;
 	var TextareaControl = wp.components.TextareaControl;
 	var ToggleControl = wp.components.ToggleControl;
+	var Button = wp.components.Button;
 
 	var blockIcon = el(
 		'svg',
@@ -47,7 +49,7 @@
 		};
 	}
 
-	registerBlockType( 'svg-support/inline-svg', {
+	registerBlockType( 'svg-support/svg', {
 		icon: blockIcon,
 
 		edit: function ( props ) {
@@ -64,8 +66,8 @@
 					el( MediaPlaceholder, {
 						icon: blockIcon,
 						labels: {
-							title: __( 'Inline SVG', 'svg-support' ),
-							instructions: __( 'Choose an SVG from your media library or upload a new one. It renders as true inline SVG on your site.', 'svg-support' )
+							title: __( 'SVG', 'svg-support' ),
+							instructions: __( 'Choose an SVG from your media library or upload a new one.', 'svg-support' )
 						},
 						accept: 'image/svg+xml',
 						allowedTypes: [ 'image/svg+xml' ],
@@ -119,13 +121,54 @@
 							}
 						} ),
 						el( ToggleControl, {
-							label: __( 'Inherit text color', 'svg-support' ),
-							help: __( 'Maps the SVG’s fill colors to currentColor so it follows your theme’s text color.', 'svg-support' ),
-							checked: !! attributes.useCurrentColor,
+							label: __( 'Render inline', 'svg-support' ),
+							help: __( 'Off: the SVG is a normal image. On: it’s embedded in the page so you can style it with CSS and set a single colour.', 'svg-support' ),
+							checked: !! attributes.inline,
 							onChange: function ( value ) {
-								props.setAttributes( { useCurrentColor: !! value } );
+								props.setAttributes( { inline: !! value } );
 							}
 						} ),
+						attributes.inline && el( ToggleControl, {
+							key: 'single-colour',
+							label: __( 'Single colour', 'svg-support' ),
+							help: __( 'Flatten the SVG to one colour — great for icons and single-colour art.', 'svg-support' ),
+							checked: !! attributes.color,
+							onChange: function ( on ) {
+								props.setAttributes( { color: on ? 'currentColor' : '' } );
+							}
+						} ),
+						attributes.inline && attributes.color && el(
+							'div',
+							{ key: 'colour-row', style: { margin: '0 0 16px' } },
+							el(
+								'div',
+								{ style: { display: 'flex', gap: '8px', alignItems: 'center' } },
+								el( 'input', {
+									type: 'color',
+									value: attributes.color === 'currentColor' ? '#000000' : attributes.color,
+									'aria-label': __( 'SVG colour', 'svg-support' ),
+									onChange: function ( e ) {
+										props.setAttributes( { color: e.target.value } );
+									},
+									style: { width: '40px', height: '30px', padding: 0, border: 'none', background: 'none' }
+								} ),
+								el(
+									Button,
+									{
+										variant: 'link',
+										onClick: function () { props.setAttributes( { color: 'currentColor' } ); }
+									},
+									__( 'Match text colour', 'svg-support' )
+								)
+							),
+							el(
+								'p',
+								{ style: { fontSize: '12px', opacity: 0.7, margin: '4px 0 0' } },
+								attributes.color === 'currentColor'
+									? __( 'Following your theme’s text colour.', 'svg-support' )
+									: __( 'Custom colour.', 'svg-support' )
+							)
+						),
 						el( TextControl, {
 							label: __( 'Custom ID', 'svg-support' ),
 							help: __( 'Optional id attribute for CSS/JS targeting.', 'svg-support' ),

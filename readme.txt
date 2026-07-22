@@ -19,7 +19,7 @@ SVG Support enables secure SVG uploads with powerful features for both basic use
 
 ✨ **Key Features**:
 - Secure SVG uploads with automatic sanitization
-- **Native Inline SVG block** — insert any SVG from your media library as true inline SVG, with width/height/alignment, a `currentColor` toggle and custom classes
+- **Native SVG block** — insert any SVG from your media library, as a normal image by default, with an optional inline mode for CSS styling and a single-colour option
 - **Server-side rendering engine** — inlines SVGs in PHP as the page builds: no front-end JavaScript, no flash of the un-swapped image, no layout shift, and image attributes preserved
 - Inline rendering for direct CSS/JS manipulation
 - File size optimization through minification
@@ -58,7 +58,7 @@ SVG Support enables secure SVG uploads with powerful features for both basic use
 - Customize with hooks and filters for tailored functionality
 
 **Block Editor Usage**:
-- Use the **Inline SVG block** to drop an SVG straight into any post or page as true inline SVG — no settings or CSS classes required
+- Use the **SVG block** to drop an SVG into any post or page — it's a normal image by default, with an optional "Render inline" toggle for CSS styling and a single-colour option, no CSS classes required
 - Or use Advanced Mode with the classic class-targeting approach:
   - Add the `"style-svg"` class to Image blocks
   - Add the `"style-svg"` class to Cover blocks to render SVG backgrounds inline
@@ -161,11 +161,11 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 = 3.0.0 =
 **The biggest update in SVG Support's history — and the free plugin stays free forever.** Everything you use today keeps working exactly as it did; nothing is removed, and no action is required on upgrade.
 
-* **New: Inline SVG block**
-    - Insert any SVG from your media library as true inline SVG — no class-swap gymnastics
+* **New: SVG block**
+    - Insert any SVG from your media library — a normal image by default, just like the Image block
+    - Optional "Render inline" toggle embeds the SVG so you can style it with CSS — no class-swap gymnastics
+    - Single-colour option (when inline): flatten to one colour, following your theme's text colour or a colour you pick — handy for icons
     - Width, height and alignment controls, a custom ID field, and custom classes
-    - "Inherit text color" toggle maps the SVG's fills to `currentColor` so it follows your theme
-    - Renders clean markup with no front-end JavaScript
 
 * **New: server-side rendering engine**
     - Inlines your SVGs in PHP as the page is built, instead of swapping images in the browser after load
@@ -565,7 +565,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 == Upgrade Notice ==
 
 = 3.0.0 =
-The biggest update ever — a native Inline SVG block and a faster server-side rendering engine — and the free plugin stays free forever. Everything you use today keeps working exactly the same; no action needed. New rendering engine is opt-in for existing sites. Now requires WordPress 6.0+.
+The biggest update ever — a native SVG block and a faster server-side rendering engine — and the free plugin stays free forever. Everything you use today keeps working exactly the same; no action needed. New rendering engine is opt-in for existing sites. Now requires WordPress 6.0+.
 
 = 2.6.0 =
 Completely redesigned settings screen with auto-save and instant Advanced Mode reveal. No settings or behavior changes — everything keeps working exactly as before. Also removes ~1,000 lines of third-party JS and fixes asset cache-busting on updates.

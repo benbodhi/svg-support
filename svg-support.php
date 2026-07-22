@@ -64,7 +64,7 @@ include( BODHI_SVGS_PLUGIN_PATH . 'functions/attribute-control.php' );		// auto 
 include( BODHI_SVGS_PLUGIN_PATH . 'functions/featured-image.php' );			// allow inline SVG for featured images
 include( BODHI_SVGS_PLUGIN_PATH . 'functions/meta-cleanup.php' );			// cleanup duplicate meta entries
 include( BODHI_SVGS_PLUGIN_PATH . 'src/rendering/bootstrap.php' );			// server-side inline rendering engine (v3)
-include( BODHI_SVGS_PLUGIN_PATH . 'src/blocks/bootstrap.php' );				// native Inline SVG block (v3)
+include( BODHI_SVGS_PLUGIN_PATH . 'src/blocks/bootstrap.php' );				// native SVG block (v3)
 
 
 /**

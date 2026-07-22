@@ -1,8 +1,8 @@
 // @ts-check
 /**
- * Block editor smoke test: the Inline SVG block must register in the JS block
- * registry and its edit() must render without throwing. The front-end render
- * is covered by server-engine.spec.js; this catches a broken editor script
+ * Block editor smoke test: the SVG block must register in the JS block registry
+ * and its edit() must render without throwing. The front-end render is covered
+ * by server-engine.spec.js; this catches a broken editor script
  * (registerBlockType / edit() errors) that PHP-side tests can't see.
  *
  * Uses the WordPress editor fixtures (admin/editor) rather than raw selectors
@@ -10,19 +10,19 @@
  */
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
-test.describe( 'Inline SVG block — editor', () => {
+test.describe( 'SVG block — editor', () => {
 
 	test( 'registers in the block registry with the right metadata', async ( { admin, page } ) => {
 		await admin.createNewPost();
 
 		const block = await page.evaluate( () => {
-			const type = window.wp.blocks.getBlockType( 'svg-support/inline-svg' );
+			const type = window.wp.blocks.getBlockType( 'svg-support/svg' );
 			return type ? { name: type.name, title: type.title, category: type.category } : null;
 		} );
 
 		expect( block ).not.toBeNull();
-		expect( block.name ).toBe( 'svg-support/inline-svg' );
-		expect( block.title ).toBe( 'Inline SVG' );
+		expect( block.name ).toBe( 'svg-support/svg' );
+		expect( block.title ).toBe( 'SVG' );
 		expect( block.category ).toBe( 'media' );
 	} );
 
@@ -31,7 +31,7 @@ test.describe( 'Inline SVG block — editor', () => {
 		page.on( 'pageerror', ( err ) => errors.push( err.message ) );
 
 		await admin.createNewPost();
-		await editor.insertBlock( { name: 'svg-support/inline-svg' } );
+		await editor.insertBlock( { name: 'svg-support/svg' } );
 
 		// edit() with no media chosen shows the MediaPlaceholder.
 		const canvas = editor.canvas;

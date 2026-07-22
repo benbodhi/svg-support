@@ -63,7 +63,7 @@ test.describe( 'v3 rendering pipeline (block + content images)', () => {
 			title: 'engine-e2e',
 			status: 'publish',
 			content:
-				`<!-- wp:svg-support/inline-svg {"id":${ media.id },"url":"${ media.source_url }","width":"120px","alt":"Block graphic"} /-->\n` +
+				`<!-- wp:svg-support/svg {"id":${ media.id },"url":"${ media.source_url }","inline":true,"width":"120px","alt":"Block graphic"} /-->\n` +
 				`<!-- wp:html --><img class="style-svg" src="${ media.source_url }" alt="Front icon" width="48" height="48" /><!-- /wp:html -->`,
 		} );
 	} );
@@ -95,7 +95,7 @@ test.describe( 'v3 rendering pipeline (block + content images)', () => {
 		await expect( contentSvg ).toHaveAttribute( 'role', 'img' );
 
 		// Block render: width control + block class + accessible name.
-		const blockSvg = page.locator( 'svg.wp-block-svg-support-inline-svg' );
+		const blockSvg = page.locator( 'svg.wp-block-svg-support-svg' );
 		await expect( blockSvg ).toHaveCount( 1 );
 		await expect( blockSvg ).toHaveAttribute( 'width', '120px' );
 		await expect( blockSvg ).toHaveAttribute( 'aria-label', 'Block graphic' );
@@ -110,7 +110,7 @@ test.describe( 'v3 rendering pipeline (block + content images)', () => {
 		await expect( page.locator( 'script#bodhi_svg_inline-js' ) ).toHaveCount( 1 );
 
 		// The block renders inline server-side regardless of engine choice…
-		await expect( page.locator( 'svg.wp-block-svg-support-inline-svg' ) ).toHaveCount( 1 );
+		await expect( page.locator( 'svg.wp-block-svg-support-svg' ) ).toHaveCount( 1 );
 
 		// …and the content image is swapped by JS after load.
 		await expect( page.locator( 'svg.replaced-svg' ) ).toHaveCount( 2 );

@@ -1,12 +1,12 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "svg-support/inline-svg",
+	"name": "svg-support/svg",
 	"version": "1.0.0",
-	"title": "Inline SVG",
+	"title": "SVG",
 	"category": "media",
-	"description": "Insert an SVG from your media library as true inline SVG markup — clean output, ready for styling and animation, no front-end JavaScript.",
-	"keywords": [ "svg", "vector", "icon", "inline", "graphic" ],
+	"description": "Insert an SVG from your media library. Renders as a normal image by default, with an optional inline mode for CSS styling and colour.",
+	"keywords": [ "svg", "vector", "icon", "image", "graphic" ],
 	"textdomain": "svg-support",
 	"attributes": {
 		"id": {
@@ -32,9 +32,13 @@
 			"type": "string",
 			"default": ""
 		},
-		"useCurrentColor": {
+		"inline": {
 			"type": "boolean",
 			"default": false
+		},
+		"color": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"supports": {
