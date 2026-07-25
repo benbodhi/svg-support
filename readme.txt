@@ -153,7 +153,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 = 2.6.1 =
 * **Fixed**:
-    - Fatal error when uploading SVGs through WP-CLI (`wp media import`, migration and hosting tooling) — the sanitizer instance never reached global scope in CLI contexts. No security impact: affected uploads crashed rather than skipping sanitization (failed closed). The sanitizer is now resolved through a defensive accessor, with regression tests covering the CLI loading context. Props to the community reporter.
+    - Fatal error when uploading SVGs through WP-CLI (`wp media import`, migration and hosting tooling) — the sanitizer instance never reached global scope in CLI contexts. No security impact: affected uploads crashed rather than skipping sanitization (failed closed). The sanitizer is now resolved through a defensive accessor, with regression tests covering the CLI loading context. Props to Cal from Toolshed for the excellent report.
 
 = 2.6.0 =
 * **New Features**:
