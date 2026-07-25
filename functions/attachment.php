@@ -209,7 +209,7 @@ add_filter( 'wp_generate_attachment_metadata', 'bodhi_svgs_generate_svg_attachme
  */
 function bodhi_svgs_sanitize( $file ){
 
-	global $sanitizer;
+	$sanitizer = bodhi_svgs_sanitizer();
 
 	$sanitizer->setAllowedTags( new bodhi_svg_tags() );
 	$sanitizer->setAllowedAttrs( new bodhi_svg_attributes() );
@@ -270,10 +270,9 @@ function bodhi_svgs_sanitize( $file ){
 function bodhi_svgs_minify() {
 
 	global $bodhi_svgs_options;
-	global $sanitizer;
 
 	if ( !empty($bodhi_svgs_options['minify_svg']) && $bodhi_svgs_options['minify_svg'] === 'on' ) {
-		$sanitizer->minify(true);
+		bodhi_svgs_sanitizer()->minify(true);
 	}
 
 }
