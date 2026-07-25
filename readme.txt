@@ -151,6 +151,10 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 == Changelog ==
 
+= 2.6.1 =
+* **Fixed**:
+    - Fatal error when uploading SVGs through WP-CLI (`wp media import`, migration and hosting tooling) — the sanitizer instance never reached global scope in CLI contexts. No security impact: affected uploads crashed rather than skipping sanitization (failed closed). The sanitizer is now resolved through a defensive accessor, with regression tests covering the CLI loading context. Props to Cal from Toolshed for the excellent report.
+
 = 2.6.0 =
 * **New Features**:
     - Completely redesigned settings screen with the new SVG Support brand — cleaner panels, real toggle switches, role picker chips, and a live code sample
@@ -535,6 +539,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+
+= 2.6.1 =
+Fixes a fatal error on SVG uploads via WP-CLI (wp media import and similar tooling). Tiny, safe update — no settings or behavior changes.
 
 = 2.6.0 =
 Completely redesigned settings screen with auto-save and instant Advanced Mode reveal. No settings or behavior changes — everything keeps working exactly as before. Also removes ~1,000 lines of third-party JS and fixes asset cache-busting on updates.
