@@ -670,3 +670,104 @@
 /* ShortPixel logo */
 .svgs-card .svgs-partner-logo { display: block; margin-bottom: 12px; }
 .svgs-card .svgs-partner-logo img { max-width: 160px; height: auto; }
+
+/* ---------- Pro waitlist card ---------- */
+
+.svgs-card-pro {
+	border-color: var(--svgs-blue-200);
+	background: linear-gradient(180deg, var(--svgs-blue-50) 0%, #fff 140px);
+}
+
+.svgs-eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	margin-bottom: 10px;
+	padding: 3px 9px 3px 7px;
+	font-family: var(--svgs-font-display);
+	font-size: 10.5px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--svgs-blue-600);
+	background: #fff;
+	border: 1px solid var(--svgs-blue-200);
+	border-radius: 999px;
+}
+
+.svgs-perks {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0 0 16px;
+	padding: 0;
+	list-style: none;
+}
+
+.svgs-perks li {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	font-size: 13px;
+	line-height: 1.45;
+	color: var(--svgs-gray-600);
+}
+
+.svgs-perks .svgs-icon {
+	flex: none;
+	margin-top: 1px;
+	color: var(--svgs-blue-500);
+}
+
+.svgs-waitlist {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+/* An author `display` beats the UA `[hidden]` rule — re-assert it for both
+   elements the script toggles. */
+.svgs-waitlist[hidden],
+.svgs-ds .svgs-card .svgs-waitlist-status[hidden] {
+	display: none;
+}
+
+.svgs-waitlist-label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--svgs-ink-900);
+}
+
+.svgs-ds .svgs-waitlist-input {
+	max-width: none;
+	height: 40px;
+	font-family: var(--svgs-font-body);
+	font-size: 13.5px;
+}
+
+.svgs-ds .svgs-card .svgs-waitlist-status {
+	display: flex;
+	align-items: flex-start;
+	gap: 7px;
+	margin: 12px 0 0;
+	padding: 10px 12px;
+	font-size: 13px;
+	line-height: 1.45;
+	color: var(--svgs-ink-900);
+	background: var(--svgs-blue-50);
+	border: 1px solid var(--svgs-blue-200);
+	border-radius: var(--svgs-radius-sm);
+}
+
+.svgs-ds .svgs-card .svgs-waitlist-status.is-error {
+	color: var(--svgs-red);
+	background: var(--svgs-red-bg);
+	border-color: var(--svgs-red);
+}
+
+.svgs-ds .svgs-card .svgs-waitlist-fine {
+	margin: 12px 0 0;
+	font-size: 11.5px;
+	line-height: 1.6;
+	color: var(--svgs-gray-400);
+}

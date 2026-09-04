@@ -57,6 +57,8 @@ function bodhi_svgs_admin_settings_assets() {
 					'btnIdle'   => __( 'Save changes', 'svg-support' ),
 					'btnSaving' => __( 'Saving…', 'svg-support' ),
 					'btnSaved'  => __( 'Saved', 'svg-support' ),
+					'wlSuccess' => __( 'Almost in — check your inbox and confirm your email to lock in your spot.', 'svg-support' ),
+					'wlError'   => __( 'That didn\'t go through — please try again, or sign up at svg.support.', 'svg-support' ),
 				),
 			)
 		) . ';',

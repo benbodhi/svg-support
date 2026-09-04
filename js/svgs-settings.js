@@ -136,3 +136,73 @@
 		});
 	}
 })();
+
+/**
+ * Pro waitlist sign-up (settings sidebar).
+ * Progressive enhancement: without JS the form posts straight to Kit in a new
+ * tab; with JS we post in the background and confirm inline, so the admin
+ * never leaves the settings screen.
+ */
+(function () {
+	'use strict';
+
+	var form = document.getElementById('svgs-waitlist-form');
+	if (!form) {
+		return;
+	}
+
+	var status = document.getElementById('svgs-waitlist-status');
+	var fine = document.querySelector('.svgs-waitlist-fine');
+	var i18n = (window.SvgsSettings && window.SvgsSettings.i18n) || {};
+	var button = form.querySelector('button[type="submit"]');
+
+	function show(message, isError) {
+		if (!status) {
+			return;
+		}
+		status.textContent = message;
+		status.classList.toggle('is-error', !!isError);
+		status.hidden = false;
+	}
+
+	form.addEventListener('submit', function (e) {
+		e.preventDefault();
+
+		if (!form.checkValidity()) {
+			form.reportValidity();
+			return;
+		}
+
+		if (button) {
+			button.disabled = true;
+		}
+
+		fetch(form.getAttribute('action'), {
+			method: 'POST',
+			headers: { Accept: 'application/json' },
+			body: new FormData(form)
+		})
+			.then(function (res) {
+				if (!res.ok) {
+					throw new Error('bad status');
+				}
+				// Kit answers with JSON, but an empty body is still a success.
+				return res.json().catch(function () { return {}; });
+			})
+			.then(function () {
+				// Swap the whole sign-up block for the confirmation — the
+				// "what gets sent" note has nothing left to explain.
+				form.hidden = true;
+				if (fine) {
+					fine.hidden = true;
+				}
+				show(i18n.wlSuccess);
+			})
+			.catch(function () {
+				if (button) {
+					button.disabled = false;
+				}
+				show(i18n.wlError, true);
+			});
+	});
+})();
