@@ -73,6 +73,60 @@ test.describe( 'SVG Support settings — Pro waitlist', () => {
 		expect( page.url() ).toContain( 'page=svg-support' );
 	} );
 
+	test( 'a quarantined submission is not reported as a sign-up', async ( { page } ) => {
+		// Kit's spam guard answers 200 with a verdict, not a subscriber. Nobody
+		// is subscribed and no email is sent until the linked check is passed.
+		const guard = 'https://app.kit.com/forms/guards/abc123';
+		await page.route( 'https://app.kit.com/**', ( route ) => {
+			if ( route.request().url().includes( '/subscriptions' ) ) {
+				return route.fulfill( {
+					status: 200,
+					contentType: 'application/json',
+					body: JSON.stringify( { status: 'quarantined', url: guard } ),
+				} );
+			}
+			return route.fulfill( { status: 200, body: '' } );
+		} );
+
+		await page.goto( SETTINGS );
+		await page.locator( '#svgs-waitlist-email' ).fill( 'e2e@example.com' );
+		await page.locator( '#svgs-waitlist-form button[type="submit"]' ).click();
+
+		const status = page.locator( '#svgs-waitlist-status' );
+		await expect( status ).toBeVisible( { timeout: 6000 } );
+		await expect( status ).not.toContainText( 'check your inbox' );
+
+		// The person gets a way to finish, in a new tab.
+		const link = status.locator( 'a' );
+		await expect( link ).toHaveAttribute( 'href', guard );
+		await expect( link ).toHaveAttribute( 'target', '_blank' );
+
+		// The form stays put so they can retry after passing the check.
+		await expect( page.locator( '#svgs-waitlist-form' ) ).toBeVisible();
+		await expect( page.locator( '#svgs-waitlist-form button[type="submit"]' ) ).toBeEnabled();
+	} );
+
+	test( 'a guard URL that is not Kit is never linked', async ( { page } ) => {
+		// The URL arrives from a third party and lands in wp-admin, so anything
+		// off kit.com must be refused rather than rendered as a link.
+		await page.route( 'https://app.kit.com/**', ( route ) =>
+			route.fulfill( {
+				status: 200,
+				contentType: 'application/json',
+				body: JSON.stringify( { status: 'quarantined', url: 'https://evil.example.com/phish' } ),
+			} )
+		);
+
+		await page.goto( SETTINGS );
+		await page.locator( '#svgs-waitlist-email' ).fill( 'e2e@example.com' );
+		await page.locator( '#svgs-waitlist-form button[type="submit"]' ).click();
+
+		const status = page.locator( '#svgs-waitlist-status' );
+		await expect( status ).toBeVisible( { timeout: 6000 } );
+		await expect( status.locator( 'a' ) ).toHaveCount( 0 );
+		await expect( page.locator( 'a[href*="evil.example.com"]' ) ).toHaveCount( 0 );
+	} );
+
 	test( 'a failed sign-up reports the error and leaves the form usable', async ( { page } ) => {
 		await page.route( 'https://app.kit.com/**', ( route ) => route.fulfill( { status: 500, body: '' } ) );
 

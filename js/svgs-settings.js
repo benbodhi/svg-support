@@ -165,6 +165,38 @@
 		status.hidden = false;
 	}
 
+	/**
+	 * Kit's spam guard answers 200 with a URL the person must visit to finish.
+	 * Only ever link to Kit's own https endpoints — the URL comes from a
+	 * third-party response and this is wp-admin.
+	 */
+	function kitUrl(value) {
+		try {
+			var parsed = new URL(value);
+			if (parsed.protocol === 'https:' && /(^|\.)kit\.com$/.test(parsed.hostname)) {
+				return parsed.href;
+			}
+		} catch (e) {
+			// Not a URL we can trust — fall through.
+		}
+		return '';
+	}
+
+	function showWithLink(message, href, label) {
+		if (!status) {
+			return;
+		}
+		status.textContent = message + ' ';
+		var link = document.createElement('a');
+		link.href = href;
+		link.target = '_blank';
+		link.rel = 'noopener';
+		link.textContent = label;
+		status.appendChild(link);
+		status.classList.remove('is-error');
+		status.hidden = false;
+	}
+
 	form.addEventListener('submit', function (e) {
 		e.preventDefault();
 
@@ -189,7 +221,19 @@
 				// Kit answers with JSON, but an empty body is still a success.
 				return res.json().catch(function () { return {}; });
 			})
-			.then(function () {
+			.then(function (data) {
+				// A "quarantined" verdict is Kit's spam guard, not a signup:
+				// no subscriber and no confirmation email until the person
+				// passes the check it points at. Never report that as success.
+				var guard = data && data.status === 'quarantined' ? kitUrl(data.url) : '';
+				if (guard) {
+					if (button) {
+						button.disabled = false;
+					}
+					showWithLink(i18n.wlGuard, guard, i18n.wlGuardCta);
+					return;
+				}
+
 				// Swap the whole sign-up block for the confirmation — the
 				// "what gets sent" note has nothing left to explain.
 				form.hidden = true;
