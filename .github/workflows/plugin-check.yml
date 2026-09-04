@@ -69,7 +69,7 @@ jobs:
       - name: Run Plugin Check
         run: |
           wp-env run cli wp plugin check svg-support \
-            --exclude-directories=.git,.github,.wordpress-org,node_modules,bin,tests \
+            --exclude-directories=.git,.github,.claude,.wordpress-org,node_modules,bin,tests \
             --exclude-files=.DS_Store,.gitignore,.gitattributes,.distignore,README.md,LICENSE,composer.json,composer.lock,.wp-env.json,package.json,package-lock.json \
             --ignore-codes=stable_tag_mismatch \
             --require=./wp-content/plugins/plugin-check/cli.php
