@@ -16,6 +16,9 @@
 /.gitattributes
 /.distignore
 
+# Local AI tooling config (Plugin Check flags it as an "AI instruction directory")
+/.claude
+
 # WordPress.org store-listing assets (deployed to /assets/, not trunk)
 /.wordpress-org
 

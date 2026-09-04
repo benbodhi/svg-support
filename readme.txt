@@ -3,9 +3,9 @@ Contributors: Benbodhi
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z9R7JERS82EQQ
 Tags: svg, vector, safe svg, sanitization, mime type
 Requires at least: 5.8
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.5.16
+Stable tag: 2.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -81,6 +81,16 @@ With a single click, you can spin up a completely free test site to test SVG Sup
 SVG Support prioritizes security with automatic sanitization and role-based restrictions. Only trusted users should have upload permissions. Configure settings to balance functionality and security.
 
 
+== External Services ==
+
+SVG Support does not send your data anywhere on its own — everything it does (uploads, sanitization, inline rendering) happens entirely on your own site.
+
+The one exception is opt-in: the plugin's settings screen offers a sign-up form for the SVG Support Pro waitlist. If — and only if — you type your email address into that form and submit it, your browser sends that email address, plus a fixed label marking the plugin settings screen as the source (`utm_source=svg-support-plugin`), to Kit (kit.com), the newsletter service used for SVG Support announcements. Nothing is transmitted if you never use the form, no information is collected in the background, and every email includes a one-click unsubscribe.
+
+Kit terms of service: [https://kit.com/terms](https://kit.com/terms)
+Kit privacy policy: [https://kit.com/privacy](https://kit.com/privacy)
+
+
 == Feedback ==
 
 I'm open to your [suggestions and feedback](mailto:wp@benbodhi.com) - Thanks for using SVG Support!
@@ -150,6 +160,13 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Changelog ==
+
+= 2.6.2 =
+* **Compatibility**:
+    - Tested up to WordPress 7.1. No code changes were required — WordPress 7.1's new client-side media processing only handles raster images (JPEG, PNG, GIF, WebP and AVIF), so SVG uploads keep running through this plugin's own MIME validation and sanitization exactly as before.
+
+* **New Features**:
+    - Optional SVG Support Pro waitlist sign-up on the settings screen — join for launch news, early access and founding-supporter pricing. Your email address is sent only when you submit that form (see External Services above), and the free plugin stays free, like always.
 
 = 2.6.1 =
 * **Fixed**:
@@ -539,6 +556,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+
+= 2.6.2 =
+Compatibility release: tested up to WordPress 7.1, with no changes needed to uploads, sanitization or rendering. Adds an optional SVG Support Pro waitlist sign-up on the settings screen.
 
 = 2.6.1 =
 Fixes a fatal error on SVG uploads via WP-CLI (wp media import and similar tooling). Tiny, safe update — no settings or behavior changes.
