@@ -224,13 +224,19 @@
 			.then(function (data) {
 				// A "quarantined" verdict is Kit's spam guard, not a signup:
 				// no subscriber and no confirmation email until the person
-				// passes the check it points at. Never report that as success.
-				var guard = data && data.status === 'quarantined' ? kitUrl(data.url) : '';
-				if (guard) {
+				// passes the check it points at. Never report that as success
+				// — including when the URL it hands back fails validation and
+				// there is no safe link to offer.
+				if (data && data.status === 'quarantined') {
 					if (button) {
 						button.disabled = false;
 					}
-					showWithLink(i18n.wlGuard, guard, i18n.wlGuardCta);
+					var guard = kitUrl(data.url);
+					if (guard) {
+						showWithLink(i18n.wlGuard, guard, i18n.wlGuardCta);
+					} else {
+						show(i18n.wlError, true);
+					}
 					return;
 				}
 

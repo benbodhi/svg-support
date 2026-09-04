@@ -125,6 +125,12 @@ test.describe( 'SVG Support settings — Pro waitlist', () => {
 		await expect( status ).toBeVisible( { timeout: 6000 } );
 		await expect( status.locator( 'a' ) ).toHaveCount( 0 );
 		await expect( page.locator( 'a[href*="evil.example.com"]' ) ).toHaveCount( 0 );
+
+		// Refusing the link must not turn a quarantine into a fake success:
+		// the submission still did not subscribe anyone.
+		await expect( status ).toHaveClass( /is-error/ );
+		await expect( status ).not.toContainText( 'check your inbox' );
+		await expect( page.locator( '#svgs-waitlist-form' ) ).toBeVisible();
 	} );
 
 	test( 'a failed sign-up reports the error and leaves the form usable', async ( { page } ) => {
