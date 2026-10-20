@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 40"><a xlink:href="#safe"><text x="5" y="25">click</text><ANIMATETRANSFORM ATTRIBUTENAME=" XLink:HREF " BY="java&#9;script:alert(1)" begin="0s" dur="0.1s" fill="freeze"/><animateTransform attributeName="transform" type="rotate" values="0;javascript:alert(2)" dur="1s"/></a></svg>

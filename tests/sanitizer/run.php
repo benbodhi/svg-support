@@ -2,10 +2,11 @@
 /**
  * Standalone sanitizer regression runner.
  *
- * Exercises the plugin's REAL sanitization engine — the vendored
- * enshrined/svg-sanitize library configured with SVG Support's own
- * bodhi_svg_tags / bodhi_svg_attributes whitelists and removeRemoteReferences,
- * exactly as bodhi_svgs_sanitize() sets it up — against the fixture corpus.
+ * Exercises the plugin's REAL sanitization engine — bodhi_svg_sanitizer (the
+ * vendored enshrined/svg-sanitize library plus the plugin's adjustments)
+ * configured with SVG Support's own bodhi_svg_tags / bodhi_svg_attributes
+ * whitelists and removeRemoteReferences, exactly as bodhi_svgs_sanitize() sets
+ * it up — against the fixture corpus.
  *
  * It needs no WordPress and no Docker: it shims the handful of WP functions the
  * whitelist classes call, so it runs anywhere PHP is available (locally and in
@@ -42,15 +43,14 @@ if ( ! function_exists( 'esc_html__' ) ) {
 require $PLUGIN_ROOT . '/vendor/autoload.php';
 require $PLUGIN_ROOT . '/includes/svg-tags.php';
 require $PLUGIN_ROOT . '/includes/svg-attributes.php';
-
-use enshrined\svgSanitize\Sanitizer;
+require $PLUGIN_ROOT . '/includes/svg-sanitizer.php';
 
 /**
  * Mirror of bodhi_svgs_sanitize()'s core configuration + gzip round-trip,
  * operating on a string instead of a file so it is pure and testable.
  */
 function svgs_test_sanitize_string( $dirty, $minify = false ) {
-	$sanitizer = new Sanitizer();
+	$sanitizer = new bodhi_svg_sanitizer();
 	$sanitizer->setAllowedTags( new bodhi_svg_tags() );
 	$sanitizer->setAllowedAttrs( new bodhi_svg_attributes() );
 	$sanitizer->removeRemoteReferences( true );
@@ -121,6 +121,10 @@ $benign_expect = array(
 	// "Documented current behavior" section below. The sanitizer strips SMIL
 	// animation elements, so the shape it keeps is the <circle>, not <animate>.
 	'animate-smil.svg'          => array( '<circle' ),
+	'animate-transform.svg'     => array( '<animateTransform', 'attributeName="transform"', 'values="0 25 25;360 25 25"', '<animateMotion', 'path="M10,25 Q25,5 40,25"' ),
+	// http(s) link targets survive removeRemoteReferences(true): a link is
+	// followed when clicked, never fetched.
+	'linked-svg.svg'            => array( 'href="https://example.com/products"', 'xlink:href="http://example.org/about"', 'href="/contact/"' ),
 );
 
 foreach ( $benign_expect as $file => $needles ) {
@@ -153,6 +157,10 @@ $malicious_forbid = array(
 	'animate-values-javascript.svg'  => array( 'javascript:' ),
 	'handler-element.svg'            => array( '<handler' ),
 	'set-onbegin.svg'                => array( 'onbegin' ),
+	// #50073 (WPScan): SMIL animations retargeting a link's href (Safari).
+	'animatetransform-href-safari.svg'          => array( 'javascript:', 'attributename="href"' ),
+	'animatemotion-href.svg'                    => array( 'javascript:', 'attributename="href"' ),
+	'animatetransform-xlink-href-mixedcase.svg' => array( 'javascript', 'href "' ),
 );
 
 foreach ( $malicious_forbid as $file => $forbidden ) {
@@ -189,13 +197,46 @@ check( 'SMIL <set> is stripped by the sanitizer', $smil !== false && stripos( $s
 check( 'shape around the SMIL survives (<circle>)', $smil !== false && stripos( $smil, '<circle' ) !== false );
 note( 'SMIL animation elements are removed on upload by the sanitizer whitelist.' );
 
-// 2. Remote <image href> passes through (enshrined strips remote <use> but not
-//    remote <image>). Privacy/tracking vector when rendered inline. Longstanding
-//    (not a 2.6.0 regression); v3.0 server-side engine should strip/block it.
+// 2. Remote <image href> is stripped since enshrined/svg-sanitize 1.x (it used
+//    to pass through, a privacy/tracking vector when rendered inline).
 $img = svgs_test_sanitize_string( file_get_contents( "$malicious_dir/external-image-href.svg" ) );
-check( 'remote <image href> currently survives (known limitation)', $img !== false && stripos( $img, 'evil.example.com' ) !== false );
-check( 'remote <use href> IS stripped (for contrast)', stripos( (string) svgs_test_sanitize_string( file_get_contents( "$malicious_dir/external-use-href.svg" ) ), 'evil.example.com' ) === false );
-note( 'Remote <image href> is not stripped by enshrined — address in the v3.0 server-side engine.' );
+check( 'remote <image href> is stripped', $img !== false && stripos( $img, 'evil.example.com' ) === false );
+check( 'remote <use href> is stripped', stripos( (string) svgs_test_sanitize_string( file_get_contents( "$malicious_dir/external-use-href.svg" ) ), 'evil.example.com' ) === false );
+
+// --- SMIL animations can't retarget a link (#50073) --------------------------
+section( 'SMIL animations cannot change a link target' );
+
+foreach ( array( 'animatetransform-href-safari.svg', 'animatemotion-href.svg', 'animatetransform-xlink-href-mixedcase.svg' ) as $file ) {
+	$clean = svgs_test_sanitize_string( file_get_contents( "$malicious_dir/$file" ) );
+	check( "$file — still sanitizes (not rejected)", $clean !== false );
+	check( "$file — no attributeName targets an href", ! preg_match( '/attributename\s*=\s*"[^"]*href/i', (string) $clean ) );
+	check( "$file — no script URL left anywhere", ! preg_match( '/(?:java|vb)\s*script/i', (string) $clean ) );
+	check( "$file — the link and its text survive", stripos( (string) $clean, '<a' ) !== false && stripos( (string) $clean, '<text' ) !== false );
+}
+
+// Animation elements a site adds back through svg_allowed_tags get the same treatment.
+$set = svgs_test_sanitize_string( '<svg xmlns="http://www.w3.org/2000/svg"><a href="#s"><text>x</text><animateTransform attributeName="onclick" values="alert(1)"/><animateTransform attributeName="x:href" to="data:text/html,x"/></a></svg>' );
+check( 'attributeName targeting an event handler is removed', $set !== false && stripos( $set, 'onclick' ) === false );
+check( 'prefixed href target and data: value are removed', $set !== false && stripos( $set, 'x:href' ) === false && stripos( $set, 'data:text' ) === false );
+
+// --- DTD entities fail closed ------------------------------------------------
+// enshrined/svg-sanitize 1.x strips the DTD before parsing, so a document that
+// uses its own entities no longer parses and is rejected. That includes the
+// HTML-colliding entity trick (&Tab; meaning "#" to XML but a tab to HTML).
+// Illustrator files saved with "Preserve Illustrator Editing Capabilities" are
+// in this group; the upload prefilter already refused them as "not a valid SVG".
+section( 'DTD entities are rejected, not expanded' );
+
+$dtd_dir = "$PLUGIN_ROOT/tests/fixtures/dtd";
+
+foreach ( array( 'entity-html-collision.svg', 'entity-markup.svg', 'parameter-entity.svg', 'expansion-bomb.svg', 'attlist-default.svg', 'illustrator-preserve-editing.svg' ) as $file ) {
+	check( "$file — rejected", svgs_test_sanitize_string( file_get_contents( "$dtd_dir/$file" ) ) === false );
+}
+
+// A redeclared predefined entity is ignored with the DTD: &amp; stays an
+// ampersand, so the href is just an invalid (removed) value.
+$amp = svgs_test_sanitize_string( file_get_contents( "$dtd_dir/redefine-predefined.svg" ) );
+check( 'redefine-predefined.svg — &amp; is never expanded into a script URL', $amp === false || ( stripos( $amp, 'javascript' ) === false && stripos( $amp, 'href' ) === false ) );
 
 // --- .svgz gzip round-trip: decode, clean, re-encode -------------------------
 section( 'Gzipped .svgz round-trip' );

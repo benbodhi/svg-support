@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 100" width="200" height="100">
+  <a href="https://example.com/products" target="_blank"><rect width="90" height="90" fill="#0099ff"/></a>
+  <a xlink:href="http://example.org/about"><circle cx="150" cy="50" r="40"/></a>
+  <a href="/contact/"><text x="10" y="98">Contact</text></a>
+</svg>

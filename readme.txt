@@ -162,6 +162,21 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 == Changelog ==
 
 = 2.6.2 =
+* **Security Enhancements**:
+    - Fixed a stored XSS where SVGs uploaded over XML-RPC (`wp.uploadFile` and `metaWeblog.newMediaObject`, including .svgz) skipped sanitization. XML-RPC uploads are now sanitized before they are written, and any SVG stored through `wp_upload_bits()` (importers and other plugins) is sanitized once it lands on disk. Exploiting it required a user who had been allowed to upload SVGs. Thanks to Het Kalariya for the report, and to WPScan (Automattic) for the coordinated disclosure
+    - Fixed a stored XSS in Safari where an SVG animation such as `<animateTransform>` could turn a link's target into a `javascript:` URL after sanitization. Animations can no longer target a link or an event handler, and script URLs are removed from animated values. Exploiting it required a user who had been allowed to upload SVGs. Thanks to Pierre Rudloff for the report, and to WPScan (Automattic) for the coordinated disclosure
+    - Hardening: uploads from users without the `upload_files` capability (for example through a front-end upload form) are now always sanitized. "Do not sanitize for these roles" only applies to users who can upload files
+    - Updated the bundled SVG sanitizer (enshrined/svg-sanitize) to 1.1.0, which fixes seven upstream security advisories (remote references, DTD entities, SMIL animations and several slow-input cases)
+    - Updated the bundled DOMPurify library to 3.4.17 for front-end sanitization of inline SVGs. The 2.x line no longer receives security fixes
+
+* **Behavior Changes** (from the sanitizer update):
+    - Remote references are removed more thoroughly: a remote `<image>`, or a remote CSS `url()` or `@import` (such as a Google Fonts import) inside an SVG, is now stripped. Links (`<a href="https://...">`) are kept
+    - SVGs that define their own DTD entities are now rejected by every upload route. The Media Library already refused them
+
+* **Fixed**:
+    - No more `finfo_close()` deprecation notice on every SVG upload under PHP 8.5
+    - Gzipped .svgz files now get their width and height read, instead of 0×0 and a PHP warning
+
 * **Compatibility**:
     - Tested up to WordPress 7.1. No code changes were required — WordPress 7.1's new client-side media processing only handles raster images (JPEG, PNG, GIF, WebP and AVIF), so SVG uploads keep running through this plugin's own MIME validation and sanitization exactly as before.
 
@@ -558,7 +573,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 == Upgrade Notice ==
 
 = 2.6.2 =
-Compatibility release: tested up to WordPress 7.1, with no changes needed to uploads, sanitization or rendering. Adds an optional SVG Support Pro waitlist sign-up on the settings screen.
+Important security update. Fixes two stored XSS issues (SVG uploads over XML-RPC, and SVG animations in Safari) and updates the bundled sanitization libraries. Also tested up to WordPress 7.1, and adds an optional SVG Support Pro waitlist sign-up. Please update.
 
 = 2.6.1 =
 Fixes a fatal error on SVG uploads via WP-CLI (wp media import and similar tooling). Tiny, safe update — no settings or behavior changes.

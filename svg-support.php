@@ -41,32 +41,32 @@ if (!is_array($bodhi_svgs_options)) {
 /**
  * SVG Sanitizer class
  */
-// init svg sanitizer for usage
-use enshrined\svgSanitize\Sanitizer;
 // svg sanitizer
 include( BODHI_SVGS_PLUGIN_PATH . 'vendor/autoload.php' );
 // interfaces to enable custom whitelisting of svg tags and attributes
 include( BODHI_SVGS_PLUGIN_PATH . 'includes/svg-tags.php' );
 include( BODHI_SVGS_PLUGIN_PATH . 'includes/svg-attributes.php' );
+// the library plus SVG Support's own adjustments (animations, link targets)
+include( BODHI_SVGS_PLUGIN_PATH . 'includes/svg-sanitizer.php' );
 // initialize sanitizer — explicitly in the global scope: WP-CLI includes
 // wp-settings.php from inside a method, so a bare top-level assignment in a
 // plugin file never reaches global scope there, and every sanitize-on-upload
 // (wp media import, migrations, hosting tooling) fataled on a null sanitizer.
 global $sanitizer;
-$sanitizer = new Sanitizer();
+$sanitizer = new bodhi_svg_sanitizer();
 
 /**
  * The shared sanitizer instance, rebuilt defensively if the global is missing
  * in whatever loading context we find ourselves in. All consumers go through
  * this instead of trusting `global $sanitizer` directly.
  *
- * @return \enshrined\svgSanitize\Sanitizer
+ * @return bodhi_svg_sanitizer
  */
 function bodhi_svgs_sanitizer() {
 	global $sanitizer;
 
-	if ( ! $sanitizer instanceof Sanitizer ) {
-		$sanitizer = new Sanitizer();
+	if ( ! $sanitizer instanceof bodhi_svg_sanitizer ) {
+		$sanitizer = new bodhi_svg_sanitizer();
 	}
 
 	return $sanitizer;
