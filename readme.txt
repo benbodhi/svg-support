@@ -5,7 +5,7 @@ Tags: svg, vector, safe svg, sanitization, mime type
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.6.2
+Stable tag: 2.6.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,13 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Changelog ==
+
+= 2.6.3 =
+* **Fixed**:
+    - SVGs on offloaded media (such as S3 Uploads, which stores files at `s3://` paths) now get their real width and height in the Media Library and in their attachment metadata, instead of 0×0. Those paths were mistaken for web addresses and downloaded over HTTP, which WordPress refuses, instead of being read as files
+
+* **New Features**:
+    - New `bodhi_svgs_remote_svg_url` filter for the URL a remote SVG is downloaded from to read its dimensions, for example to sign URLs for a private bucket. Props to @dylanblokhuis on GitHub for the suggestion
 
 = 2.6.2 =
 * **Security Enhancements**:
@@ -571,6 +578,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+
+= 2.6.3 =
+Fixes 0×0 dimensions for SVGs on offloaded media such as S3 Uploads, and adds a filter for remote SVG URLs. Small, safe update with no settings changes.
 
 = 2.6.2 =
 Important security update. Fixes two stored XSS issues (SVG uploads over XML-RPC, and SVG animations in Safari) and updates the bundled sanitization libraries. Also tested up to WordPress 7.1, and adds an optional SVG Support Pro waitlist sign-up. Please update.
