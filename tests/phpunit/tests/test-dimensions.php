@@ -180,11 +180,14 @@ class Test_Dimensions extends WP_UnitTestCase {
 		stream_wrapper_register( 'phar', 'Bodhi_Test_Bucket_Wrapper' );
 
 		$dimensions = bodhi_svgs_get_dimensions( 'phar://bucket/uploads/2026/10/logo.svg' );
+		$nested     = bodhi_svgs_get_dimensions( 'compress.zlib://phar://bucket/uploads/2026/10/logo.svg' );
 
 		stream_wrapper_unregister( 'phar' );
 
 		$this->assertSame( 0, $dimensions->width );
 		$this->assertSame( 0, $dimensions->height );
+		$this->assertSame( 0, $nested->width );
+		$this->assertSame( 0, $nested->height );
 		$this->assertSame( array(), Bodhi_Test_Bucket_Wrapper::$opens, 'a phar path must never be opened' );
 		$this->assertSame( array(), $this->requests );
 	}

@@ -77,8 +77,9 @@ function bodhi_svgs_get_dimensions( $svg ) {
 			return (object) array( 'width' => 0, 'height' => 0 );
 		}
 		$svg_content = wp_remote_retrieve_body( $response );
-	} elseif ( 0 === stripos( $svg, 'phar://' ) ) {
-		// Never open a phar archive, which can unserialize its metadata on PHP 7
+	} elseif ( false !== stripos( $svg, 'phar://' ) ) {
+		// Never open a phar archive, which can unserialize its metadata on PHP 7, even
+		// when it's nested inside another wrapper such as compress.zlib://
 		return (object) array( 'width' => 0, 'height' => 0 );
 	} else {
 		// For files, use WP_Filesystem to read the file content
