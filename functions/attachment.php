@@ -52,7 +52,7 @@ add_filter( 'wp_prepare_attachment_for_js', 'bodhi_svgs_response_for_svg', 10, 3
 /**
  * Get the dimensions of an SVG file.
  *
- * This function checks if the SVG is a local file or a remote URL, retrieves its content, and
+ * This function checks if the SVG is a file or a remote URL, retrieves its content, and
  * parses the width and height from the SVG attributes.
  *
  * @param string $svg The file path or URL of the SVG.
@@ -63,16 +63,26 @@ function bodhi_svgs_get_dimensions( $svg ) {
 
 	$svg_content = '';
 
-	// Check if $svg is a URL or a local file path
-	if ( filter_var( $svg, FILTER_VALIDATE_URL ) ) {
-		// For remote SVGs, use wp_remote_get()
-		$response = wp_remote_get( $svg );
+	// Only http(s) URLs are downloaded. Anything else is read as a file, including the
+	// stream wrapper paths that offloaded media uses (S3 Uploads stores files at s3://)
+	if ( preg_match( '#^https?://#i', $svg ) ) {
+		/**
+		 * Filters the URL a remote SVG is downloaded from to read its dimensions.
+		 *
+		 * @param string $svg The SVG's URL.
+		 */
+		$svg_url = apply_filters( 'bodhi_svgs_remote_svg_url', $svg );
+		$response = wp_remote_get( $svg_url );
 		if ( is_wp_error( $response ) ) {
 			return (object) array( 'width' => 0, 'height' => 0 );
 		}
 		$svg_content = wp_remote_retrieve_body( $response );
+	} elseif ( false !== stripos( $svg, 'phar://' ) ) {
+		// Never open a phar archive, which can unserialize its metadata on PHP 7, even
+		// when it's nested inside another wrapper such as compress.zlib://
+		return (object) array( 'width' => 0, 'height' => 0 );
 	} else {
-		// For local files, use WP_Filesystem to read the file content
+		// For files, use WP_Filesystem to read the file content
 		if ( ! function_exists( 'WP_Filesystem' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
@@ -245,9 +255,15 @@ function bodhi_svgs_sanitize_string( $dirty ) {
 	// Enable minify in library if its enabled in admin panel
 	bodhi_svgs_minify();
 
-	$clean = $sanitizer->sanitize( $dirty );
+	// A sanitizer that throws instead of returning false must still fail closed, or a
+	// file that is already on disk (wp_upload_bits) would be left as it was written
+	try {
+		$clean = $sanitizer->sanitize( $dirty );
+	} catch ( Throwable $e ) {
+		$clean = false;
+	}
 
-	if ( $clean === false ) {
+	if ( ! is_string( $clean ) ) {
 		return false;
 	}
 
