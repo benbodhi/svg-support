@@ -136,3 +136,123 @@
 		});
 	}
 })();
+
+/**
+ * Pro waitlist sign-up (settings sidebar).
+ * Progressive enhancement: without JS the form posts straight to Kit in a new
+ * tab; with JS we post in the background and confirm inline, so the admin
+ * never leaves the settings screen.
+ */
+(function () {
+	'use strict';
+
+	var form = document.getElementById('svgs-waitlist-form');
+	if (!form) {
+		return;
+	}
+
+	var status = document.getElementById('svgs-waitlist-status');
+	var fine = document.querySelector('.svgs-waitlist-fine');
+	var i18n = (window.SvgsSettings && window.SvgsSettings.i18n) || {};
+	var button = form.querySelector('button[type="submit"]');
+
+	function show(message, isError) {
+		if (!status) {
+			return;
+		}
+		status.textContent = message;
+		status.classList.toggle('is-error', !!isError);
+		status.hidden = false;
+	}
+
+	/**
+	 * Kit's spam guard answers 200 with a URL the person must visit to finish.
+	 * Only ever link to Kit's own https endpoints — the URL comes from a
+	 * third-party response and this is wp-admin.
+	 */
+	function kitUrl(value) {
+		try {
+			var parsed = new URL(value);
+			if (parsed.protocol === 'https:' && /(^|\.)kit\.com$/.test(parsed.hostname)) {
+				return parsed.href;
+			}
+		} catch (e) {
+			// Not a URL we can trust — fall through.
+		}
+		return '';
+	}
+
+	function showWithLink(message, href, label) {
+		if (!status) {
+			return;
+		}
+		status.textContent = message + ' ';
+		var link = document.createElement('a');
+		link.href = href;
+		link.target = '_blank';
+		link.rel = 'noopener';
+		link.textContent = label;
+		status.appendChild(link);
+		status.classList.remove('is-error');
+		status.hidden = false;
+	}
+
+	form.addEventListener('submit', function (e) {
+		e.preventDefault();
+
+		if (!form.checkValidity()) {
+			form.reportValidity();
+			return;
+		}
+
+		if (button) {
+			button.disabled = true;
+		}
+
+		fetch(form.getAttribute('action'), {
+			method: 'POST',
+			headers: { Accept: 'application/json' },
+			body: new FormData(form)
+		})
+			.then(function (res) {
+				if (!res.ok) {
+					throw new Error('bad status');
+				}
+				// Kit answers with JSON, but an empty body is still a success.
+				return res.json().catch(function () { return {}; });
+			})
+			.then(function (data) {
+				// A "quarantined" verdict is Kit's spam guard, not a signup:
+				// no subscriber and no confirmation email until the person
+				// passes the check it points at. Never report that as success
+				// — including when the URL it hands back fails validation and
+				// there is no safe link to offer.
+				if (data && data.status === 'quarantined') {
+					if (button) {
+						button.disabled = false;
+					}
+					var guard = kitUrl(data.url);
+					if (guard) {
+						showWithLink(i18n.wlGuard, guard, i18n.wlGuardCta);
+					} else {
+						show(i18n.wlError, true);
+					}
+					return;
+				}
+
+				// Swap the whole sign-up block for the confirmation — the
+				// "what gets sent" note has nothing left to explain.
+				form.hidden = true;
+				if (fine) {
+					fine.hidden = true;
+				}
+				show(i18n.wlSuccess);
+			})
+			.catch(function () {
+				if (button) {
+					button.disabled = false;
+				}
+				show(i18n.wlError, true);
+			});
+	});
+})();

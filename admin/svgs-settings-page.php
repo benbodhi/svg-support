@@ -276,6 +276,35 @@ $bodhi_svgs_bypass_roles   = isset( $bodhi_svgs_options['sanitize_on_upload_role
 
 		<aside class="svgs-sidebar">
 
+			<div class="svgs-card svgs-card-pro">
+				<span class="svgs-eyebrow"><?php bodhi_svgs_icon( 'wand-sparkles', 13 ); ?><?php esc_html_e( 'Coming soon', 'svg-support' ); ?></span>
+				<h3><?php esc_html_e( 'SVG Support Pro is on the way', 'svg-support' ); ?></h3>
+				<p><?php esc_html_e( 'A visual way to animate, recolour and optimise your SVGs — no code required. The free plugin stays free, like always.', 'svg-support' ); ?></p>
+				<ul class="svgs-perks">
+					<li><?php bodhi_svgs_icon( 'zap', 14 ); ?><span><?php esc_html_e( 'Early access before the public launch', 'svg-support' ); ?></span></li>
+					<li><?php bodhi_svgs_icon( 'sparkles', 14 ); ?><span><?php esc_html_e( 'Founding-supporter lifetime pricing, strictly limited', 'svg-support' ); ?></span></li>
+					<li><?php bodhi_svgs_icon( 'shield-check', 14 ); ?><span><?php esc_html_e( 'No spam — just launch news', 'svg-support' ); ?></span></li>
+				</ul>
+				<?php
+				// Posts to Kit (the newsletter service). Without JS the browser posts
+				// straight there in a new tab; svgs-settings.js posts in the background
+				// and confirms inline so the admin never leaves this screen.
+				?>
+				<form id="svgs-waitlist-form" class="svgs-waitlist" action="https://app.kit.com/forms/9716438/subscriptions" method="post" target="_blank" rel="noopener">
+					<label class="svgs-waitlist-label" for="svgs-waitlist-email"><?php esc_html_e( 'Get launch news & early access', 'svg-support' ); ?></label>
+					<input id="svgs-waitlist-email" class="svgs-input svgs-waitlist-input" type="email" name="email_address" placeholder="you@example.com" autocomplete="email" required />
+					<input type="hidden" name="utm_source" value="svg-support-plugin" />
+					<input type="hidden" name="utm_medium" value="plugin-settings" />
+					<input type="hidden" name="utm_campaign" value="pro-waitlist" />
+					<button class="svgs-btn svgs-btn-primary svgs-btn-sm svgs-btn-block" type="submit"><?php esc_html_e( 'Join the waitlist', 'svg-support' ); ?></button>
+				</form>
+				<p id="svgs-waitlist-status" class="svgs-waitlist-status" role="status" aria-live="polite" hidden></p>
+				<p class="svgs-waitlist-fine">
+					<?php esc_html_e( 'Nothing is sent until you submit the form. Your email address then goes to Kit, the newsletter service for SVG Support, and you can unsubscribe any time.', 'svg-support' ); ?>
+					<a target="_blank" href="https://kit.com/privacy"><?php esc_html_e( 'Kit privacy policy', 'svg-support' ); ?></a>
+				</p>
+			</div>
+
 			<div class="svgs-card svgs-card-ink">
 				<div class="svgs-stat">1,000,000+</div>
 				<div class="svgs-stat-caption"><?php esc_html_e( 'active installs and counting', 'svg-support' ); ?></div>

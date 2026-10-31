@@ -33,3 +33,6 @@ composer.lock
 /playwright-report/
 /test-results/
 /.wp-env.override.json
+
+# Claude Code personal settings
+.claude/settings.local.json

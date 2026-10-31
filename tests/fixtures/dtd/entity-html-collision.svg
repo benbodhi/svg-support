@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg [ <!ENTITY Tab "#"> ]>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><a href="&Tab;javascript:alert(document.domain)"><rect width="10" height="10"/></a></svg>

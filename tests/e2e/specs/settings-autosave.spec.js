@@ -6,6 +6,23 @@ const ADVANCED = 'input[name="bodhi_svgs_settings[advanced_mode]"]';
 const CSS_TARGET = 'input[name="bodhi_svgs_settings[css_target]"]';
 
 /**
+ * Resolve when the next autosave request lands.
+ *
+ * Arm this *before* the change that triggers the save. The save-state chip
+ * lingers on "saved" for 2.5s after the previous change, so a test that only
+ * waits for the chip can match that stale value and race ahead of a save whose
+ * debounce (400ms on change, 800ms while typing) has not even fired yet.
+ */
+function nextAutosave( page ) {
+	return page.waitForResponse(
+		( res ) =>
+			res.url().includes( 'admin-ajax.php' ) &&
+			( res.request().postData() || '' ).includes( 'bodhi_svgs_autosave' ),
+		{ timeout: 10000 }
+	);
+}
+
+/**
  * Exercises the redesigned settings screen shipped in 2.6.0: debounced AJAX
  * autosave, the live Advanced Mode reveal, and the classic (no-JS) fallback
  * form. These are the new surfaces the covenant most needs to keep working.
@@ -20,18 +37,21 @@ test.describe( 'SVG Support settings — autosave & reveal', () => {
 
 		// Normalize to OFF first so the test is deterministic.
 		if ( await toggle.isChecked() ) {
+			const normalized = nextAutosave( page );
 			await toggle.uncheck( { force: true } );
-			await expect( page.locator( '#svgs-savestate' ) ).toHaveAttribute( 'data-state', 'saved', { timeout: 6000 } );
+			await normalized;
 		}
 
 		const firstAdvanced = page.locator( '.svgs-advanced' ).first();
 		await expect( firstAdvanced ).toBeHidden();
 
 		// Turn Advanced Mode ON — sections should reveal immediately (no reload).
+		const savedOn = nextAutosave( page );
 		await toggle.check( { force: true } );
 		await expect( firstAdvanced ).toBeVisible();
 
-		// The save-state chip should reach "saved".
+		// The save lands, and the save-state chip reports it.
+		await savedOn;
 		await expect( page.locator( '#svgs-savestate' ) ).toHaveAttribute( 'data-state', 'saved', { timeout: 6000 } );
 
 		// Persistence: reload and confirm it stuck.
@@ -40,8 +60,9 @@ test.describe( 'SVG Support settings — autosave & reveal', () => {
 		await expect( page.locator( '.svgs-advanced' ).first() ).toBeVisible();
 
 		// Restore OFF so we leave the site as we found it.
+		const restored = nextAutosave( page );
 		await page.locator( ADVANCED ).uncheck( { force: true } );
-		await expect( page.locator( '#svgs-savestate' ) ).toHaveAttribute( 'data-state', 'saved', { timeout: 6000 } );
+		await restored;
 	} );
 
 	test( 'css_target text input autosaves and persists', async ( { page } ) => {
@@ -51,28 +72,34 @@ test.describe( 'SVG Support settings — autosave & reveal', () => {
 		// while Advanced Mode is off. Enable it first so the field is reachable.
 		const toggle = page.locator( ADVANCED );
 		if ( ! ( await toggle.isChecked() ) ) {
+			const advancedOn = nextAutosave( page );
 			await toggle.check( { force: true } );
-			await expect( page.locator( '#svgs-savestate' ) ).toHaveAttribute( 'data-state', 'saved', { timeout: 6000 } );
+			await advancedOn;
 		}
 
 		const input = page.locator( CSS_TARGET );
 		await expect( input ).toBeVisible();
 
 		const value = 'style-svg-e2e';
+		// Typing debounce is 800ms; wait for the request itself, then confirm
+		// the chip agrees.
+		const savedValue = nextAutosave( page );
 		await input.fill( value );
-		// Typing debounce is 800ms; the chip confirms the save landed.
+		await savedValue;
 		await expect( page.locator( '#svgs-savestate' ) ).toHaveAttribute( 'data-state', 'saved', { timeout: 8000 } );
 
 		await page.reload();
 		await expect( page.locator( CSS_TARGET ) ).toHaveValue( value );
 
 		// Restore empty (falls back to the default "style-svg" at render time).
+		const cleared = nextAutosave( page );
 		await page.locator( CSS_TARGET ).fill( '' );
-		await expect( page.locator( '#svgs-savestate' ) ).toHaveAttribute( 'data-state', 'saved', { timeout: 8000 } );
+		await cleared;
 
 		// Leave Advanced Mode off so the site is as we found it.
+		const advancedOff = nextAutosave( page );
 		await page.locator( ADVANCED ).uncheck( { force: true } );
-		await expect( page.locator( '#svgs-savestate' ) ).toHaveAttribute( 'data-state', 'saved', { timeout: 6000 } );
+		await advancedOff;
 	} );
 
 	test( 'classic no-JS fallback form is intact', async ( { page } ) => {

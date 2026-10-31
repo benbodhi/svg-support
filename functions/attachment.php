@@ -85,7 +85,16 @@ function bodhi_svgs_get_dimensions( $svg ) {
 		return (object) array( 'width' => 0, 'height' => 0 );
 	}
 
-	$svg = simplexml_load_string( $svg_content );
+	// A gzipped .svgz has to be decompressed before it can be parsed
+	if ( bodhi_svgs_is_gzipped( $svg_content ) ) {
+		$svg_content = gzdecode( $svg_content );
+	}
+
+	// Parse quietly: a file that can't be read just reports no dimensions
+	$use_errors = libxml_use_internal_errors( true );
+	$svg = $svg_content ? simplexml_load_string( $svg_content ) : false;
+	libxml_clear_errors();
+	libxml_use_internal_errors( $use_errors );
 
 	if ( $svg === FALSE ) {
 		$width = '0';
@@ -198,31 +207,25 @@ function bodhi_svgs_generate_svg_attachment_metadata( $metadata, $attachment_id 
 add_filter( 'wp_generate_attachment_metadata', 'bodhi_svgs_generate_svg_attachment_metadata', 10, 3 );
 
 /**
- * Sanitize SVG files.
+ * Sanitize SVG markup.
  *
- * This function sanitizes SVG files by removing potentially harmful elements and attributes.
- * It also optionally minifies the SVG content and re-encodes it if it was originally gzipped.
+ * Removes potentially harmful elements and attributes, optionally minifies, and
+ * re-encodes the result if the input was gzipped (.svgz).
  *
- * @param string $file The file path of the SVG to sanitize.
+ * @param string $dirty The SVG markup, plain or gzipped.
  *
- * @return bool True if the file was successfully sanitized, false otherwise.
+ * @return string|false The sanitized SVG, or false if it couldn't be sanitized.
  */
-function bodhi_svgs_sanitize( $file ){
+function bodhi_svgs_sanitize_string( $dirty ) {
+
+	if ( ! is_string( $dirty ) ) {
+		return false;
+	}
 
 	$sanitizer = bodhi_svgs_sanitizer();
 
 	$sanitizer->setAllowedTags( new bodhi_svg_tags() );
 	$sanitizer->setAllowedAttrs( new bodhi_svg_attributes() );
-
-	$dirty = '';
-
-	// Using WP_Filesystem to read the SVG file content
-	if ( ! function_exists( 'WP_Filesystem' ) ) {
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-	}
-	global $wp_filesystem;
-	WP_Filesystem();
-	$dirty = $wp_filesystem->get_contents( $file );
 
 	// Try to decode if gzipped is enabled
 	if ( $is_zipped = bodhi_svgs_is_gzipped( $dirty ) ) {
@@ -251,6 +254,35 @@ function bodhi_svgs_sanitize( $file ){
 	// If the file was gzipped, we need to re-zip it
 	if ( $is_zipped ) {
 		$clean = gzencode( $clean );
+	}
+
+	return $clean;
+
+}
+
+/**
+ * Sanitize SVG files.
+ *
+ * This function sanitizes an SVG file in place with bodhi_svgs_sanitize_string().
+ *
+ * @param string $file The file path of the SVG to sanitize.
+ *
+ * @return bool True if the file was successfully sanitized, false otherwise.
+ */
+function bodhi_svgs_sanitize( $file ){
+
+	// Using WP_Filesystem to read the SVG file content
+	if ( ! function_exists( 'WP_Filesystem' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+	global $wp_filesystem;
+	WP_Filesystem();
+	$dirty = $wp_filesystem->get_contents( $file );
+
+	$clean = bodhi_svgs_sanitize_string( $dirty );
+
+	if ( $clean === false ) {
+		return false;
 	}
 
 	// Use WP_Filesystem to write the sanitized content back
@@ -297,6 +329,41 @@ function bodhi_svgs_is_gzipped( $contents ) {
 }
 
 /**
+ * Check whether a file name has an SVG extension (.svg or .svgz).
+ *
+ * @param string $file_name The file name or path.
+ *
+ * @return bool True for .svg and .svgz, in any letter case.
+ */
+function bodhi_svgs_is_svg_filename( $file_name ) {
+	$file_ext = strtolower( pathinfo( (string) $file_name, PATHINFO_EXTENSION ) );
+	return $file_ext === 'svg' || $file_ext === 'svgz';
+}
+
+/**
+ * Check whether the current user's SVGs are stored without sanitization.
+ *
+ * Only a user who can upload files and holds a role chosen under "Do not
+ * sanitize for these roles" bypasses the sanitizer. Anyone without
+ * upload_files (e.g. a front-end upload form that accepts SVGs) is always
+ * sanitized, whatever their role.
+ *
+ * @return bool True if the user bypasses sanitization.
+ */
+function bodhi_svgs_user_bypasses_sanitization() {
+	global $bodhi_svgs_options;
+
+	if ( ! current_user_can( 'upload_files' ) ) {
+		return false;
+	}
+
+	$bypass_roles = isset( $bodhi_svgs_options['sanitize_on_upload_roles'] ) ? (array) $bodhi_svgs_options['sanitize_on_upload_roles'] : array();
+	$user = wp_get_current_user();
+
+	return ! empty( array_intersect( $bypass_roles, (array) $user->roles ) );
+}
+
+/**
  * Pre-filter for handling SVG uploads.
  *
  * This function checks if the uploaded file is an SVG and applies sanitization if required.
@@ -306,16 +373,13 @@ function bodhi_svgs_is_gzipped( $contents ) {
  * @return array The modified file data.
  */
 function bodhi_svgs_sanitize_svg($file) {
-	global $bodhi_svgs_options;
-
 	$file_path = $file['tmp_name'];
 	$file_name = $file['name'];
 
 	// First quick check - if it's clearly not an SVG (.svg or .svgz), return early.
 	// .svgz must NOT bypass sanitization: it is registered as image/svg+xml and
 	// served inline, so a .svgz holding plaintext SVG could otherwise store XSS.
-	$file_ext = strtolower( pathinfo( $file_name, PATHINFO_EXTENSION ) );
-	if ( ! empty( $file_name ) && $file_ext !== 'svg' && $file_ext !== 'svgz' ) {
+	if ( ! empty( $file_name ) && ! bodhi_svgs_is_svg_filename( $file_name ) ) {
 		return $file;
 	}
 
@@ -324,7 +388,10 @@ function bodhi_svgs_sanitize_svg($file) {
 		// 1. Check MIME type using fileinfo
 		$finfo = finfo_open( FILEINFO_MIME_TYPE );
 		$real_mime = finfo_file( $finfo, $file_path );
-		finfo_close( $finfo );
+		// finfo is an object freed automatically since PHP 8.1, and finfo_close() is deprecated in 8.5
+		if ( PHP_VERSION_ID < 80100 ) {
+			finfo_close( $finfo );
+		}
 
 		// 2. Read file content to check for SVG header
 		$file_content = file_get_contents( $file_path );
@@ -381,20 +448,10 @@ function bodhi_svgs_sanitize_svg($file) {
 		return $file;
 	}
 
-	// Get the roles that do not require SVG sanitization
-	$sanitize_on_upload_roles_array = (array) $bodhi_svgs_options['sanitize_on_upload_roles'];
-	$user = wp_get_current_user();
-	$current_user_roles = (array) $user->roles;
-
-	// Check if the current user's roles intersect with the roles that do not need sanitization
-	$no_sanitize_needed = array_intersect($sanitize_on_upload_roles_array, $current_user_roles);
-
-	// Check if the user has the capability to upload SVGs
-	$can_upload_files = current_user_can('upload_files');
-
 	// Always sanitize sideloaded files (they may run with no interactive user);
 	// otherwise force sanitize unless the user is in a role that bypasses it.
-	if ($is_sideload || ($can_upload_files && empty($no_sanitize_needed))) {
+	// Users without upload_files never bypass (see bodhi_svgs_user_bypasses_sanitization()).
+	if ($is_sideload || ! bodhi_svgs_user_bypasses_sanitization()) {
 		// Delegate to the shared, gzip-aware sanitizer so browser uploads, REST
 		// uploads and imports all apply the same whitelist filters, remote-reference
 		// removal and gzip (.svgz) handling.
@@ -410,6 +467,164 @@ function bodhi_svgs_sanitize_svg($file) {
 add_filter('wp_handle_upload_prefilter', 'bodhi_svgs_sanitize_svg');
 // Also sanitize SVGs added programmatically via media_handle_sideload()
 add_filter('wp_handle_sideload_prefilter', 'bodhi_svgs_sanitize_svg');
+
+/**
+ * Route XML-RPC media uploads through the SVG sanitizer.
+ *
+ * wp.uploadFile and metaWeblog.newMediaObject store the file with
+ * wp_upload_bits(), which fires neither upload prefilter, so they are wrapped
+ * to sanitize the bytes before core writes them. Only core's own mapping is
+ * wrapped; anything else is still covered by bodhi_svgs_watch_upload_bits().
+ *
+ * @param array $methods The XML-RPC methods and their callbacks.
+ *
+ * @return array The methods, with the media upload callbacks wrapped.
+ */
+function bodhi_svgs_xmlrpc_methods( $methods ) {
+	foreach ( array( 'wp.uploadFile', 'metaWeblog.newMediaObject' ) as $method ) {
+		if ( isset( $methods[ $method ] ) && $methods[ $method ] === 'this:mw_newMediaObject' ) {
+			$methods[ $method ] = 'bodhi_svgs_xmlrpc_new_media_object';
+		}
+	}
+
+	return $methods;
+}
+add_filter( 'xmlrpc_methods', 'bodhi_svgs_xmlrpc_methods', PHP_INT_MAX );
+
+/**
+ * Sanitize an SVG uploaded over XML-RPC, then hand it to core.
+ *
+ * Always sanitized, like REST and sideloaded uploads: the user is only
+ * authenticated inside core's method.
+ *
+ * @param array $args The method arguments: blog ID, username, password, file data.
+ *
+ * @return array|IXR_Error The uploaded media item, or an error.
+ */
+function bodhi_svgs_xmlrpc_new_media_object( $args ) {
+	global $wp_xmlrpc_server;
+
+	$data = ( is_array( $args ) && isset( $args[3] ) ) ? $args[3] : null;
+
+	if ( is_array( $data ) && isset( $data['name'], $data['bits'] ) && is_string( $data['name'] ) && is_string( $data['bits'] )
+		&& bodhi_svgs_is_svg_filename( sanitize_file_name( $data['name'] ) ) ) {
+
+		$clean = bodhi_svgs_sanitize_string( $data['bits'] );
+
+		if ( $clean === false ) {
+			return new IXR_Error( 500, __( "Sorry, this file couldn't be sanitized for security reasons and wasn't uploaded.", 'svg-support' ) );
+		}
+
+		$args[3]['bits'] = $clean;
+	}
+
+	// xmlrpc.php sets the global; code that runs its own server may not.
+	$server = ( $wp_xmlrpc_server instanceof wp_xmlrpc_server ) ? $wp_xmlrpc_server : new wp_xmlrpc_server();
+
+	return $server->mw_newMediaObject( $args );
+}
+
+/**
+ * Watch for SVGs stored with wp_upload_bits().
+ *
+ * wp_upload_bits() fires neither upload prefilter and can't be made to write
+ * different bytes, yet XML-RPC, the WordPress Importer and other plugins store
+ * files with it. So note the SVG it is about to write (its final path comes
+ * from the wp_unique_filename() call that follows) and sanitize the file once
+ * it is on disk: when it becomes an attachment, or at the end of the request.
+ *
+ * @param array|string $upload_bits The file name, bits and time, or an error message.
+ *
+ * @return array|string Unchanged.
+ */
+function bodhi_svgs_watch_upload_bits( $upload_bits ) {
+	global $bodhi_svgs_pending_upload_bits;
+
+	$bodhi_svgs_pending_upload_bits = is_array( $upload_bits ) && isset( $upload_bits['name'] ) && bodhi_svgs_is_svg_filename( $upload_bits['name'] );
+
+	return $upload_bits;
+}
+add_filter( 'wp_upload_bits', 'bodhi_svgs_watch_upload_bits', PHP_INT_MAX );
+
+/**
+ * Record where wp_upload_bits() is writing an SVG.
+ *
+ * @param string $filename The unique file name.
+ * @param string $ext      The file extension.
+ * @param string $dir      The directory the file is written to.
+ *
+ * @return string Unchanged.
+ */
+function bodhi_svgs_note_upload_bits_file( $filename, $ext, $dir ) {
+	global $bodhi_svgs_pending_upload_bits, $bodhi_svgs_upload_bits_files;
+
+	if ( ! empty( $bodhi_svgs_pending_upload_bits ) ) {
+		$bodhi_svgs_pending_upload_bits = false;
+
+		if ( bodhi_svgs_is_svg_filename( $filename ) ) {
+			$bodhi_svgs_upload_bits_files[] = wp_normalize_path( $dir . '/' . $filename );
+		}
+	}
+
+	return $filename;
+}
+add_filter( 'wp_unique_filename', 'bodhi_svgs_note_upload_bits_file', PHP_INT_MAX, 3 );
+
+/**
+ * Sanitize an SVG that wp_upload_bits() wrote, unless the user bypasses
+ * sanitization. A file that can't be sanitized is deleted, so it is never
+ * served as written.
+ *
+ * @param string $file The file path.
+ */
+function bodhi_svgs_sanitize_upload_bits_file( $file ) {
+	if ( ! bodhi_svgs_is_svg_filename( $file ) || ! file_exists( $file ) || filesize( $file ) === 0 || bodhi_svgs_user_bypasses_sanitization() ) {
+		return;
+	}
+
+	if ( ! bodhi_svgs_sanitize( $file ) ) {
+		wp_delete_file( $file );
+	}
+}
+
+/**
+ * Sanitize a watched SVG as soon as it becomes an attachment, before its
+ * metadata is generated (XML-RPC, the WordPress Importer).
+ *
+ * @param int $attachment_id The new attachment ID.
+ */
+function bodhi_svgs_sanitize_upload_bits_attachment( $attachment_id ) {
+	global $bodhi_svgs_upload_bits_files;
+
+	if ( empty( $bodhi_svgs_upload_bits_files ) ) {
+		return;
+	}
+
+	$file = wp_normalize_path( (string) get_attached_file( $attachment_id ) );
+	$key  = array_search( $file, $bodhi_svgs_upload_bits_files, true );
+
+	if ( $key === false ) {
+		return;
+	}
+
+	unset( $bodhi_svgs_upload_bits_files[ $key ] );
+	bodhi_svgs_sanitize_upload_bits_file( $file );
+}
+add_action( 'add_attachment', 'bodhi_svgs_sanitize_upload_bits_attachment' );
+
+/**
+ * Sanitize any watched SVG that didn't become an attachment during the request.
+ */
+function bodhi_svgs_sanitize_remaining_upload_bits() {
+	global $bodhi_svgs_upload_bits_files;
+
+	foreach ( (array) $bodhi_svgs_upload_bits_files as $file ) {
+		bodhi_svgs_sanitize_upload_bits_file( $file );
+	}
+
+	$bodhi_svgs_upload_bits_files = array();
+}
+add_action( 'shutdown', 'bodhi_svgs_sanitize_remaining_upload_bits' );
 
 /**
  * Fix for image widget PHP warnings related to metadata.

@@ -68,7 +68,7 @@ if [[ ! -S "$SOCK" ]]; then
 fi
 
 # Mirror .distignore so we only report on files that actually ship.
-EXCLUDE_DIRS=".git,.github,.wordpress-org,node_modules,bin,tests"
+EXCLUDE_DIRS=".git,.github,.claude,.wordpress-org,node_modules,bin,tests"
 EXCLUDE_FILES=".DS_Store,.gitignore,.gitattributes,.distignore,README.md,LICENSE,composer.json,composer.lock,package.json,package-lock.json,.wp-env.json"
 
 echo "▶ Plugin Check: $PLUGIN_SLUG  (site: $LOCAL_SITE, php ${SITE_PHP:-?})"

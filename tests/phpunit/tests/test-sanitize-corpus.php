@@ -89,14 +89,36 @@ class Test_Sanitize_Corpus extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<path', $decoded, 'decoded payload should keep the safe shape' );
 	}
 
-	/**
-	 * Documented current behavior — remote <image href> passes through. Locked
-	 * so a dependency bump that changes it is caught here.
-	 */
-	public function test_remote_image_href_current_behavior() {
+	/** Remote <image href> is stripped since enshrined/svg-sanitize 1.x. */
+	public function test_remote_image_href_is_stripped() {
 		list( $ok, $clean ) = $this->sanitize_fixture( dirname( __DIR__, 2 ) . '/fixtures/malicious/external-image-href.svg' );
 		$this->assertTrue( $ok );
-		$this->assertStringContainsString( 'evil.example.com', $clean, 'remote <image href> currently survives (known limitation)' );
+		$this->assertStringNotContainsString( 'evil.example.com', $clean, 'remote <image href> should be stripped' );
+	}
+
+	/** #50073 (WPScan): an animation can't retarget a link's href (Safari). */
+	public function test_smil_href_animation_is_neutralized() {
+		list( $ok, $clean ) = $this->sanitize_fixture( dirname( __DIR__, 2 ) . '/fixtures/malicious/animatetransform-href-safari.svg' );
+		$this->assertTrue( $ok );
+		$this->assertDoesNotMatchRegularExpression( '/attributeName\s*=\s*"[^"]*href/i', $clean );
+		$this->assertStringNotContainsStringIgnoringCase( 'javascript:', $clean );
+		$this->assertStringContainsString( 'href="#safe"', $clean, 'the link itself survives' );
+	}
+
+	/** http(s) link targets survive remote-reference removal. */
+	public function test_link_targets_survive() {
+		list( $ok, $clean ) = $this->sanitize_fixture( dirname( __DIR__, 2 ) . '/fixtures/benign/linked-svg.svg' );
+		$this->assertTrue( $ok );
+		$this->assertStringContainsString( 'href="https://example.com/products"', $clean );
+		$this->assertStringContainsString( 'xlink:href="http://example.org/about"', $clean );
+	}
+
+	/** Documents that rely on their own DTD entities fail closed (rejected). */
+	public function test_dtd_entity_documents_are_rejected() {
+		foreach ( array( 'entity-html-collision.svg', 'entity-markup.svg', 'parameter-entity.svg', 'expansion-bomb.svg' ) as $name ) {
+			list( $ok ) = $this->sanitize_fixture( dirname( __DIR__, 2 ) . "/fixtures/dtd/$name" );
+			$this->assertFalse( $ok, "$name should be rejected" );
+		}
 	}
 
 	public function test_remote_use_href_is_stripped() {

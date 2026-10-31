@@ -50,13 +50,17 @@ function bodhi_svgs_admin_settings_assets() {
 				'nonce'    => wp_create_nonce( 'bodhi_svgs_autosave' ),
 				'iconsUrl' => plugins_url( 'admin/img/icons.svg', BODHI_SVGS_PLUGIN_FILE ),
 				'i18n'     => array(
-					'idle'      => __( 'All changes saved', 'svg-support' ),
-					'saving'    => __( 'Saving…', 'svg-support' ),
-					'saved'     => __( 'Changes saved', 'svg-support' ),
-					'error'     => __( 'Couldn\'t save — retrying on next change', 'svg-support' ),
-					'btnIdle'   => __( 'Save changes', 'svg-support' ),
-					'btnSaving' => __( 'Saving…', 'svg-support' ),
-					'btnSaved'  => __( 'Saved', 'svg-support' ),
+					'idle'       => __( 'All changes saved', 'svg-support' ),
+					'saving'     => __( 'Saving…', 'svg-support' ),
+					'saved'      => __( 'Changes saved', 'svg-support' ),
+					'error'      => __( 'Couldn\'t save — retrying on next change', 'svg-support' ),
+					'btnIdle'    => __( 'Save changes', 'svg-support' ),
+					'btnSaving'  => __( 'Saving…', 'svg-support' ),
+					'btnSaved'   => __( 'Saved', 'svg-support' ),
+					'wlSuccess'  => __( 'Almost in — check your inbox and confirm your email to lock in your spot.', 'svg-support' ),
+					'wlError'    => __( 'That didn\'t go through — please try again, or sign up at svg.support.', 'svg-support' ),
+					'wlGuard'    => __( 'One more step — Kit needs to check you\'re human before your sign-up completes.', 'svg-support' ),
+					'wlGuardCta' => __( 'Finish sign-up', 'svg-support' ),
 				),
 			)
 		) . ';',
@@ -96,7 +100,7 @@ function bodhi_svgs_frontend_js() {
 
 	if ( ! empty( $bodhi_svgs_options['sanitize_svg_front_end'] ) && $bodhi_svgs_options['sanitize_svg_front_end'] === 'on' && bodhi_svgs_advanced_mode() === true ) {
 		$bodhi_svgs_js_footer = ! empty( $bodhi_svgs_options['js_foot_choice'] );
-		wp_enqueue_script( 'bodhi-dompurify-library', BODHI_SVGS_PLUGIN_URL . 'vendor/DOMPurify/DOMPurify.min.js', array(), '2.5.9', $bodhi_svgs_js_footer );
+		wp_enqueue_script( 'bodhi-dompurify-library', BODHI_SVGS_PLUGIN_URL . 'vendor/DOMPurify/DOMPurify.min.js', array(), '3.4.17', $bodhi_svgs_js_footer );
 	}
 }
 add_action( 'wp_enqueue_scripts', 'bodhi_svgs_frontend_js', 9 );

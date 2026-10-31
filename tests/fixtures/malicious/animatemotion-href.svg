@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40"><a href="#safe"><text x="5" y="25">click</text><animateMotion attributeName="href" values="XXX;javascript:alert(document.domain)//" begin="0s" dur="0.1s" fill="freeze"/></a></svg>

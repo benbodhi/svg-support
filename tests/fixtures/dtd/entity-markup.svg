@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg [ <!ENTITY x "<script>alert(1)</script>"> ]>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">&x;<rect width="10" height="10"/></svg>

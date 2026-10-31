@@ -24,7 +24,7 @@ class Test_Sanitizer_Scope extends WP_UnitTestCase {
 			unlink( $this->work );
 		}
 		// Restore the shared instance for other tests.
-		$GLOBALS['sanitizer'] = new \enshrined\svgSanitize\Sanitizer();
+		$GLOBALS['sanitizer'] = new bodhi_svg_sanitizer();
 		parent::tear_down();
 	}
 
@@ -59,7 +59,7 @@ class Test_Sanitizer_Scope extends WP_UnitTestCase {
 
 		bodhi_svgs_minify();
 
-		$this->assertInstanceOf( \enshrined\svgSanitize\Sanitizer::class, $GLOBALS['sanitizer'], 'minify must rebuild the shared instance instead of fataling' );
+		$this->assertInstanceOf( bodhi_svg_sanitizer::class, $GLOBALS['sanitizer'], 'minify must rebuild the shared instance instead of fataling' );
 
 		unset( $bodhi_svgs_options['minify_svg'] );
 	}
