@@ -22,16 +22,21 @@ permissions:
 
 jobs:
   sanitizer:
-    name: Sanitizer corpus (standalone)
+    name: Sanitizer corpus (standalone, PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5' ]
     steps:
       - uses: actions/checkout@v5
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: ${{ matrix.php }}
           extensions: dom, libxml, mbstring, zlib
+          ini-values: error_reporting=-1, display_errors=On
           coverage: none
 
       - name: Run standalone sanitizer suite
@@ -43,10 +48,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 7.4 = version floor, 8.2 = mainstream. PHPUnit 9.6 is rock-solid on
-        # both. 8.4 is deferred until a PHPUnit 10/11 bump (9.6 turns 8.4
-        # deprecations into failures). Add specific older-WP legs the same way.
-        php: [ '7.4', '8.2' ]
+        # Every PHP version from the 7.4 floor up. PHPUnit 9.6.38 runs on all
+        # of them, and phpunit.xml fails a test on any PHP deprecation, so a
+        # change that only warns on the newest PHP still turns the run red.
+        php: [ '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5' ]
     steps:
       - uses: actions/checkout@v5
 
@@ -83,8 +88,12 @@ jobs:
         run: wp-env run tests-cli --env-cwd=wp-content/plugins/svg-support/tests/phpunit ./vendor/bin/phpunit
 
   e2e:
-    name: Playwright e2e (wp-env)
+    name: Playwright e2e (wp-env, PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5' ]
     steps:
       - uses: actions/checkout@v5
 
@@ -94,6 +103,9 @@ jobs:
 
       - name: Install node dependencies
         run: npm install --no-fund --no-audit
+
+      - name: Pin PHP for this matrix leg
+        run: echo '{ "phpVersion": "${{ matrix.php }}" }' > .wp-env.override.json
 
       - name: Start wp-env (committed .wp-env.json, dev site on :8888)
         uses: nick-fields/retry@v4
@@ -117,6 +129,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-artifacts
+          name: playwright-artifacts-php${{ matrix.php }}
           path: tests/e2e/artifacts
           retention-days: 7

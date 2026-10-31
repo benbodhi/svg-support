@@ -4,6 +4,7 @@
 	backupGlobals="false"
 	colors="true"
 	convertErrorsToExceptions="true"
+	convertDeprecationsToExceptions="true"
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	>
