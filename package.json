@@ -5,7 +5,7 @@
 	"devDependencies": {
 		"@playwright/test": "^1.49.0",
 		"@wordpress/e2e-test-utils-playwright": "^1.16.0",
-		"@wordpress/env": "^10.17.0"
+		"@wordpress/env": "^12.0.0"
 	},
 	"scripts": {
 		"env:start": "wp-env start",
