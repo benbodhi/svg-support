@@ -162,6 +162,10 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 == Changelog ==
 
 = 2.6.3 =
+* **Security Enhancements**:
+    - Updated the bundled SVG sanitizer (enshrined/svg-sanitize) to 1.1.1. On PHP 8, version 1.1.0 threw an error instead of rejecting an SVG that ends inside an unclosed tag (GHSA-f7cw-vfxq-7ph2). For an SVG stored through `wp_upload_bits()`, as the WordPress Importer and some other plugins do, that left the file on disk unsanitized. Such a file is now rejected and deleted. Media Library, REST and XML-RPC uploads were never stored
+    - Hardening: if the sanitizer ever fails with an error, the SVG is treated as one that can't be sanitized and is rejected, instead of the error ending the request
+
 * **Fixed**:
     - SVGs on offloaded media (such as S3 Uploads, which stores files at `s3://` paths) now get their real width and height in the Media Library and in their attachment metadata, instead of 0×0. Those paths were mistaken for web addresses and downloaded over HTTP, which WordPress refuses, instead of being read as files
 
@@ -580,7 +584,7 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 == Upgrade Notice ==
 
 = 2.6.3 =
-Fixes 0×0 dimensions for SVGs on offloaded media such as S3 Uploads, and adds a filter for remote SVG URLs. Small, safe update with no settings changes.
+Security update. Updates the bundled SVG sanitizer to 1.1.1 and makes sure an SVG that can't be sanitized is never kept. Also fixes 0×0 dimensions for SVGs on offloaded media such as S3 Uploads, and adds a filter for remote SVG URLs. No settings changes.
 
 = 2.6.2 =
 Important security update. Fixes two stored XSS issues (SVG uploads over XML-RPC, and SVG animations in Safari) and updates the bundled sanitization libraries. Also tested up to WordPress 7.1, and adds an optional SVG Support Pro waitlist sign-up. Please update.

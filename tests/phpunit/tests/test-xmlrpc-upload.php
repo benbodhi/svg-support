@@ -197,4 +197,44 @@ class Test_XMLRPC_Upload extends WP_UnitTestCase {
 		$this->assertSame( 'not an svg', file_get_contents( "$dir/$name" ) );
 		unlink( "$dir/$name" );
 	}
+
+	/**
+	 * The WordPress Importer's route: the file is written, then becomes an
+	 * attachment. svg-sanitize 1.1.0 threw a ValueError on PHP 8 for markup
+	 * ending inside an unclosed tag (GHSA-f7cw-vfxq-7ph2), which left the
+	 * file on disk as written.
+	 */
+	public function test_wp_upload_bits_file_ending_inside_a_tag_is_deleted() {
+		wp_set_current_user( get_user_by( 'login', 'svgauthor' )->ID );
+
+		$upload = wp_upload_bits( 'unclosed.svg', null, self::PAYLOAD . '<' );
+		$this->assertFalse( $upload['error'] );
+
+		wp_insert_attachment( array( 'post_mime_type' => 'image/svg+xml', 'post_status' => 'inherit' ), $upload['file'] );
+
+		$this->assertFileDoesNotExist( $upload['file'] );
+	}
+
+	/** Whatever the sanitizer throws, the file must never be left as written. */
+	public function test_wp_upload_bits_file_is_deleted_when_the_sanitizer_throws() {
+		global $sanitizer;
+		$original  = $sanitizer;
+		$sanitizer = new class() extends bodhi_svg_sanitizer {
+			public function sanitize( $dirty ) {
+				throw new RuntimeException( 'sanitizer failure' );
+			}
+		};
+
+		wp_set_current_user( get_user_by( 'login', 'svgauthor' )->ID );
+		$upload = wp_upload_bits( 'throws.svg', null, self::PAYLOAD );
+
+		try {
+			$this->assertFalse( bodhi_svgs_sanitize_string( self::PAYLOAD ) );
+			wp_insert_attachment( array( 'post_mime_type' => 'image/svg+xml', 'post_status' => 'inherit' ), $upload['file'] );
+		} finally {
+			$sanitizer = $original;
+		}
+
+		$this->assertFileDoesNotExist( $upload['file'] );
+	}
 }

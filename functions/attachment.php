@@ -255,9 +255,15 @@ function bodhi_svgs_sanitize_string( $dirty ) {
 	// Enable minify in library if its enabled in admin panel
 	bodhi_svgs_minify();
 
-	$clean = $sanitizer->sanitize( $dirty );
+	// A sanitizer that throws instead of returning false must still fail closed, or a
+	// file that is already on disk (wp_upload_bits) would be left as it was written
+	try {
+		$clean = $sanitizer->sanitize( $dirty );
+	} catch ( Throwable $e ) {
+		$clean = false;
+	}
 
-	if ( $clean === false ) {
+	if ( ! is_string( $clean ) ) {
 		return false;
 	}
 
