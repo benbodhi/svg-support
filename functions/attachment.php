@@ -399,6 +399,11 @@ function bodhi_svgs_sanitize_svg($file) {
 		return $file;
 	}
 
+	if (!function_exists('finfo_open')) {
+		$file['error'] = __( 'PHP Fileinfo extension not loaded - unable to sanitize SVG.', 'svg-support' );
+		return $file;
+	}
+
 	// Multiple validation checks for SVG
 	if ( $file_path && file_exists( $file_path ) ) {
 		// 1. Check MIME type using fileinfo
