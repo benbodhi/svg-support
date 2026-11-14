@@ -5,7 +5,7 @@ Tags: svg, vector, safe svg, sanitization, mime type
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.6.3
+Stable tag: 2.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,10 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Changelog ==
+
+= 2.6.4 =
+* **Fixed**:
+    - On servers without PHP's Fileinfo extension, an SVG upload now stops with an error that names the missing extension, instead of a server error (HTTP 500) with no explanation. SVG uploads still need Fileinfo, so ask your host to enable it. Props to @hughc on GitHub for the fix
 
 = 2.6.3 =
 * **Security Enhancements**:
@@ -582,6 +586,9 @@ You need to add the mime type for svg and svgz to: "MLA Settings > Media Library
 
 
 == Upgrade Notice ==
+
+= 2.6.4 =
+Shows a clear error, instead of a server error, when an SVG is uploaded on a server without the PHP Fileinfo extension. Small, safe update with no settings changes.
 
 = 2.6.3 =
 Security update. Updates the bundled SVG sanitizer to 1.1.1 and makes sure an SVG that can't be sanitized is never kept. Also fixes 0×0 dimensions for SVGs on offloaded media such as S3 Uploads, and adds a filter for remote SVG URLs. No settings changes.
